@@ -43,7 +43,6 @@ class ProfileHeaderView: UIView {
     
     private let statusTextField: UITextField = {
         let textField = UITextField()
-        textField.isUserInteractionEnabled = false
         textField.borderStyle = .roundedRect
         textField.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         textField.textColor = .black
@@ -70,21 +69,25 @@ class ProfileHeaderView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        addSubview(avatarImageView)
-        addSubview(fullNameLabel)
-        addSubview(statusLabel)
-        addSubview(statusTextField)
-        addSubview(setStatusButton)
-        
         avatarImageView.layer.cornerRadius = 50
         
         setStatusButton.addTarget(self, action: #selector(buttonPressed), for: .touchUpInside)
+        
+        setupSubviews()
         
         setupConstraints()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupSubviews() {
+        addSubview(avatarImageView)
+        addSubview(fullNameLabel)
+        addSubview(statusLabel)
+        addSubview(statusTextField)
+        addSubview(setStatusButton)
     }
     
     private func setupConstraints() {
