@@ -8,10 +8,6 @@
 import Foundation
 import UIKit
 
-struct Post {
-    let title: String
-}
-
 class FeedViewController: UIViewController {
     
     let button: UIButton = {
@@ -32,13 +28,7 @@ class FeedViewController: UIViewController {
             button.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
         
-        button.addTarget(self, action: #selector(openPost), for: .touchUpInside)
+        
     }
     
-    @objc func openPost() {
-        let post = Post(title: "Hello, world!")
-        UserDefaults.standard.set(post.title, forKey: "postTitle")
-        let postViewController = PostViewController()
-        navigationController?.pushViewController(postViewController, animated: true)
-    }
 }
