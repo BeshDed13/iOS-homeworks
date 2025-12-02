@@ -31,34 +31,45 @@ class PostTableViewCell: UITableViewCell {
             contentView.addSubview($0)
         }
         
-        postImageView.contentMode = .scaleAspectFill
+        postImageView.contentMode = .scaleAspectFit
         postImageView.clipsToBounds = true
+        postImageView.backgroundColor = .black
+        postImageView.translatesAutoresizingMaskIntoConstraints = false
 
-        authorLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        authorLabel.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        authorLabel.numberOfLines = 2
+        authorLabel.textColor = .black
+        
         descriptionLabel.numberOfLines = 0
-        likesLabel.font = UIFont.systemFont(ofSize: 14)
-        viewsLabel.font = UIFont.systemFont(ofSize: 14)
+        descriptionLabel.font = UIFont.systemFont(ofSize: 14)
+        descriptionLabel.textColor = .systemGray
+        
+        likesLabel.font = UIFont.systemFont(ofSize: 16)
+        likesLabel.textColor = .black
+        
+        viewsLabel.font = UIFont.systemFont(ofSize: 16)
+        viewsLabel.textColor = .black
 
         NSLayoutConstraint.activate([
-            authorLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            authorLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            authorLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            authorLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            authorLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            authorLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
-            postImageView.topAnchor.constraint(equalTo: authorLabel.bottomAnchor, constant: 8),
+            postImageView.topAnchor.constraint(equalTo: authorLabel.bottomAnchor, constant: 12),
             postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            postImageView.heightAnchor.constraint(equalToConstant: 200),
+            postImageView.heightAnchor.constraint(equalTo: postImageView.widthAnchor),
             
-            descriptionLabel.topAnchor.constraint(equalTo: postImageView.bottomAnchor, constant: 8),
-            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            descriptionLabel.topAnchor.constraint(equalTo: postImageView.bottomAnchor, constant: 16),
+            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
-            likesLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
-            likesLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            likesLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 16),
+            likesLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             
-            viewsLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
-            viewsLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            viewsLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
+            viewsLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 16),
+            viewsLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            viewsLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
 

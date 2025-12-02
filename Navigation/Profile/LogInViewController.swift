@@ -27,10 +27,8 @@ class LogInViewController: UIViewController {
         textField.backgroundColor = .systemGray6
         textField.font = .systemFont(ofSize: 16)
         textField.autocapitalizationType = .none
-        textField.layer.borderColor = UIColor.lightGray.cgColor
-        textField.layer.borderWidth = 0.5
-        textField.layer.cornerRadius = 10
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.heightAnchor.constraint(equalToConstant: 49.75).isActive = true
         return textField
     }()
     
@@ -41,12 +39,29 @@ class LogInViewController: UIViewController {
         textField.backgroundColor = .systemGray6
         textField.font = .systemFont(ofSize: 16)
         textField.autocapitalizationType = .none
-        textField.layer.borderColor = UIColor.lightGray.cgColor
-        textField.layer.borderWidth = 0.5
-        textField.layer.cornerRadius = 10
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.heightAnchor.constraint(equalToConstant: 49.75).isActive = true
         textField.isSecureTextEntry = true
         return textField
+    }()
+    
+    private let separatorView: UIView = {
+        let line = UIView()
+        line.backgroundColor = .lightGray
+        line.translatesAutoresizingMaskIntoConstraints = false
+        line.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+        return line
+    }()
+    
+    private lazy var stack: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [loginTextField, separatorView, passwordTextField])
+        stack.axis = .vertical
+        stack.spacing = 0
+        stack.layer.borderColor = UIColor.lightGray.cgColor
+        stack.layer.borderWidth = 0.5
+        stack.layer.cornerRadius = 10
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
     }()
     
     private let loginButton: UIButton = {
@@ -91,9 +106,8 @@ class LogInViewController: UIViewController {
         contentView.translatesAutoresizingMaskIntoConstraints = false
     
         contentView.addSubview(logoImageView)
-        contentView.addSubview(loginTextField)
-        contentView.addSubview(passwordTextField)
         contentView.addSubview(loginButton)
+        contentView.addSubview(stack)
         
     }
     
@@ -115,17 +129,11 @@ class LogInViewController: UIViewController {
             logoImageView.widthAnchor.constraint(equalToConstant: 100),
             logoImageView.heightAnchor.constraint(equalToConstant: 100),
             
-            loginTextField.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 120),
-            loginTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            loginTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            loginTextField.heightAnchor.constraint(equalToConstant: 50),
+            stack.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 120),
+            stack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            stack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
-            passwordTextField.topAnchor.constraint(equalTo: loginTextField.bottomAnchor, constant: 0),
-            passwordTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            passwordTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            passwordTextField.heightAnchor.constraint(equalToConstant: 50),
-            
-            loginButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 16),
+            loginButton.topAnchor.constraint(equalTo: stack.bottomAnchor, constant: 16),
             loginButton.heightAnchor.constraint(equalToConstant: 50),
             loginButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             loginButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
