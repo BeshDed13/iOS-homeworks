@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import StorageService
 
 class ProfileViewController: UIViewController {
     
@@ -21,9 +22,18 @@ class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         
         setupTableView()
+        
+        #if DEBUG
+        tableView.backgroundColor = .red
+        tableView.backgroundView = UIView()
+        tableView.backgroundView?.backgroundColor = .red
+        #else
+        tableView.backgroundColor = .blue
+        tableView.backgroundView = UIView()
+        tableView.backgroundView?.backgroundColor = .blue
+        #endif
     }
     
     private func setupTableView() {
