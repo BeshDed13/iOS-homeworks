@@ -4,6 +4,7 @@
 //
 
 import UIKit
+import SnapKit
 
 final class ProfileHeaderView: UITableViewHeaderFooterView {
     
@@ -44,12 +45,13 @@ final class ProfileHeaderView: UITableViewHeaderFooterView {
         fullNameLabel.font = .boldSystemFont(ofSize: 18)
         fullNameLabel.textColor = .black
         addSubview(fullNameLabel)
-        NSLayoutConstraint.activate([
-            fullNameLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
-            fullNameLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 156),
-            fullNameLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            fullNameLabel.heightAnchor.constraint(equalToConstant: 28),
-        ])
+        
+        fullNameLabel.snp.makeConstraints {
+            $0.top.equalTo(safeAreaLayoutGuide).offset(16)
+            $0.leading.equalTo(safeAreaLayoutGuide).offset(156)
+            $0.trailing.equalTo(safeAreaLayoutGuide).inset(16)
+            $0.height.equalTo(28)
+        }
     }
     
     private func setupStatusLabel() {
@@ -58,12 +60,12 @@ final class ProfileHeaderView: UITableViewHeaderFooterView {
         statusLabel.font = .systemFont(ofSize: 17)
         statusLabel.textColor = .black
         addSubview(statusLabel)
-        NSLayoutConstraint.activate([
-            statusLabel.topAnchor.constraint(equalTo: fullNameLabel.bottomAnchor, constant: 16),
-            statusLabel.leadingAnchor.constraint(equalTo: fullNameLabel.leadingAnchor),
-            statusLabel.trailingAnchor.constraint(equalTo: fullNameLabel.trailingAnchor),
-            statusLabel.heightAnchor.constraint(equalTo: fullNameLabel.heightAnchor),
-        ])
+        
+        statusLabel.snp.makeConstraints {
+            $0.top.equalTo(fullNameLabel.snp.bottom).offset(16)
+            $0.leading.trailing.equalTo(fullNameLabel)
+            $0.height.equalTo(fullNameLabel)
+        }
     }
     
     private func setupStatusTextField() {
@@ -80,12 +82,12 @@ final class ProfileHeaderView: UITableViewHeaderFooterView {
         statusTextField.attributedPlaceholder = NSAttributedString.init(string: "Ready...", attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray])
         statusTextField.addTarget(self, action: #selector(statusTextChanged), for: .editingChanged)
         addSubview(statusTextField)
-        NSLayoutConstraint.activate([
-            statusTextField.topAnchor.constraint(equalTo: statusLabel.bottomAnchor, constant: 16),
-            statusTextField.leadingAnchor.constraint(equalTo: fullNameLabel.leadingAnchor),
-            statusTextField.trailingAnchor.constraint(equalTo: fullNameLabel.trailingAnchor),
-            statusTextField.heightAnchor.constraint(equalToConstant: 32),
-        ])
+        
+        statusTextField.snp.makeConstraints {
+            $0.top.equalTo(statusLabel.snp.bottom).offset(16)
+            $0.leading.trailing.equalTo(fullNameLabel)
+            $0.height.equalTo(32)
+        }
     }
     
     private func setupStatusButton() {
@@ -101,12 +103,13 @@ final class ProfileHeaderView: UITableViewHeaderFooterView {
         setStatusButton.setTitleColor(.white, for: .normal)
         setStatusButton.addTarget(self, action: #selector(statusButtonPressed), for: .touchUpInside)
         addSubview(setStatusButton)
-        NSLayoutConstraint.activate([
-            setStatusButton.topAnchor.constraint(equalTo: statusTextField.bottomAnchor, constant: 16),
-            setStatusButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            setStatusButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            setStatusButton.heightAnchor.constraint(equalToConstant: 48),
-        ])
+        
+        setStatusButton.snp.makeConstraints {
+            $0.top.equalTo(statusTextField.snp.bottom).offset(16)
+            $0.leading.equalTo(safeAreaLayoutGuide).offset(16)
+            $0.trailing.equalTo(safeAreaLayoutGuide).inset(16)
+            $0.height.equalTo(48)
+        }
     }
     
     private func setupAvatarImage() {
@@ -141,15 +144,16 @@ final class ProfileHeaderView: UITableViewHeaderFooterView {
         
         addSubviews(avatarBackground, avatarImageView, returnAvatarButton)
         
-        NSLayoutConstraint.activate([
-            avatarImageView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
-            avatarImageView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            avatarImageView.widthAnchor.constraint(equalToConstant: 128),
-            avatarImageView.heightAnchor.constraint(equalTo: avatarImageView.widthAnchor),
-            
-            returnAvatarButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
-            returnAvatarButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
-        ])
+        avatarImageView.snp.makeConstraints {
+            $0.top.equalTo(safeAreaLayoutGuide).offset(16)
+            $0.leading.equalTo(safeAreaLayoutGuide).offset(16)
+            $0.size.equalTo(128)
+        }
+
+        returnAvatarButton.snp.makeConstraints {
+            $0.top.equalTo(safeAreaLayoutGuide).offset(16)
+            $0.trailing.equalTo(safeAreaLayoutGuide).inset(16)
+        }
     }
     
     // MARK: - Event handlers
