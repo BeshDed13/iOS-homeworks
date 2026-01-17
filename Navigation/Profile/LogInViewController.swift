@@ -7,6 +7,16 @@ import UIKit
 
 final class LoginViewController: UIViewController {
     
+    private lazy var userService: UserService = {
+    #if DEBUG
+        return TestUserService()
+    #else
+        guard let avatar = UIImage(named: "teo") else { fatalError("Missing teo.png") }
+        let user = User(login: "adm", fullName: "Dmitriy Ilinskiy", status: "Online", avatar: avatar)
+        return CurrentUserService(user: user)
+    #endif
+    }()
+    
     // MARK: Visual content
     
     var loginScrollView: UIScrollView = {
@@ -166,10 +176,23 @@ final class LoginViewController: UIViewController {
 
     }
     
+    private func showAlert() {
+        let alert = UIAlertController(title: "Error", message: "User not found", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
     // MARK: - Event handlers
 
     @objc private func touchLoginButton() {
+        guard let login = loginField.text,
+              let user = userService.getUser(login: login) else {
+            showAlert()
+            return
+        }
+        
         let profileVC = ProfileViewController()
+        profileVC.user = user
         navigationController?.setViewControllers([profileVC], animated: true)
     }
 
