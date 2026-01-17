@@ -7,6 +7,8 @@ import UIKit
 
 final class LoginViewController: UIViewController {
     
+    var loginDelegate: LoginViewControllerDelegate?
+    
     private lazy var userService: UserService = {
     #if DEBUG
         return TestUserService()
@@ -64,7 +66,7 @@ final class LoginViewController: UIViewController {
 
         button.setTitle("Login", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.addTarget(nil, action: #selector(touchLoginButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(touchLoginButton), for: .touchUpInside)
         button.layer.cornerRadius = LayoutConstants.cornerRadius
         button.clipsToBounds = true
         return button
@@ -175,27 +177,29 @@ final class LoginViewController: UIViewController {
         nc.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
 
     }
-    
-    private func showAlert() {
-        let alert = UIAlertController(title: "Error", message: "User not found", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
-    }
-    
+        
     // MARK: - Event handlers
 
     @objc private func touchLoginButton() {
         guard let login = loginField.text,
-              let user = userService.getUser(login: login) else {
-            showAlert()
+              let password = passwordField.text,
+              let delegate = loginDelegate else {
             return
         }
         
-        let profileVC = ProfileViewController()
-        profileVC.user = user
-        navigationController?.setViewControllers([profileVC], animated: true)
-    }
+        if delegate.check(login: login, password: password) {
+            guard let user = userService.getUser(login: login) else { return }
 
+            let profileVC = ProfileViewController()
+            profileVC.user = user
+            navigationController?.setViewControllers([profileVC], animated: true)
+        } else {
+            let alert = UIAlertController(title: "Ошибка", message: "Неверный логин или пароль", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+        }
+    }
+    
     @objc private func keyboardShow(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             loginScrollView.contentOffset.y = keyboardSize.height - (loginScrollView.frame.height - loginButton.frame.minY)

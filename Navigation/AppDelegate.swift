@@ -31,6 +31,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         tabBarController.tabBar.backgroundColor = .white
         tabBarController.viewControllers = [profileNC, feedNC]
         
+        let factory = MyLoginFactory()
+        loginVC.loginDelegate = factory.makeLoginInspector()
+        
         // activate main window
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.rootViewController = tabBarController
