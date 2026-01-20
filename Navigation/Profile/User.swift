@@ -23,11 +23,18 @@ final class User {
 }
 
 protocol UserService {
+    var user: User { get set }
     func getUser(login: String) -> User?
 }
 
+extension UserService {
+    func getUser(login: String) -> User? {
+        return login == user.login ? self.user : nil
+    }
+}
+
 final class CurrentUserService: UserService {
-    private let user: User
+    var user: User
     
     init(user: User) {
         self.user = user
@@ -39,7 +46,13 @@ final class CurrentUserService: UserService {
 }
 
 final class TestUserService: UserService {
+    var user: User
+    
     private let testUser = User(login: "test", fullName: "testName", status: "dbgmode", avatar: UIImage(named:"teo")!)
+    
+    init(user: User) {
+        self.user = user
+    }
     
     func getUser(login: String) -> User? {
         return testUser

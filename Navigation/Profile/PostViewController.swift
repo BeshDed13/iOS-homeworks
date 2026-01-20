@@ -4,7 +4,6 @@
 //
 
 import UIKit
-import StorageService
 
 final class PostViewController: UIViewController {
     

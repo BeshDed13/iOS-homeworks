@@ -15,7 +15,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3601A2A328490DDF000D261A"
+               BlueprintIdentifier = "0AEF97512EBE6C6D00ACF87E"
                BuildableName = "Navigation.app"
                BlueprintName = "Navigation"
                ReferencedContainer = "container:Navigation.xcodeproj">
@@ -44,7 +44,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3601A2A328490DDF000D261A"
+            BlueprintIdentifier = "0AEF97512EBE6C6D00ACF87E"
             BuildableName = "Navigation.app"
             BlueprintName = "Navigation"
             ReferencedContainer = "container:Navigation.xcodeproj">
@@ -61,7 +61,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3601A2A328490DDF000D261A"
+            BlueprintIdentifier = "0AEF97512EBE6C6D00ACF87E"
             BuildableName = "Navigation.app"
             BlueprintName = "Navigation"
             ReferencedContainer = "container:Navigation.xcodeproj">
