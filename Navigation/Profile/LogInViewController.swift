@@ -10,11 +10,11 @@ final class LoginViewController: UIViewController {
     var loginDelegate: LoginViewControllerDelegate?
     
     private lazy var userService: UserService = {
-    #if DEBUG
-        return TestUserService()
-    #else
         guard let avatar = UIImage(named: "teo") else { fatalError("Missing teo.png") }
         let user = User(login: "adm", fullName: "Dmitriy Ilinskiy", status: "Online", avatar: avatar)
+    #if DEBUG
+        return TestUserService(user: user)
+    #else
         return CurrentUserService(user: user)
     #endif
     }()
@@ -74,6 +74,7 @@ final class LoginViewController: UIViewController {
     
     var loginField: UITextField = {
         let login = UITextField()
+        login.text = "adm"
         login.translatesAutoresizingMaskIntoConstraints = false
         login.placeholder = "Log In"
         login.layer.borderColor = UIColor.lightGray.cgColor
@@ -90,6 +91,7 @@ final class LoginViewController: UIViewController {
     
     var passwordField: UITextField = {
         let password = UITextField()
+        password.text = "1234"
         password.translatesAutoresizingMaskIntoConstraints = false
         password.leftViewMode = .always
         password.placeholder = "Password"

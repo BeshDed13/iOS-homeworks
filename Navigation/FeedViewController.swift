@@ -6,13 +6,36 @@
 import UIKit
 
 final class FeedViewController: UIViewController {
-
+    
+    private let model = FeedModel()
+    
+    private let textField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Enter word"
+        textField.borderStyle = .roundedRect
+        return textField
+    }()
+    
+    private lazy var checkGuessButton = CustomButton(
+        title: "Check",
+        backgroundColor: .systemGreen
+    ) { [weak self] in
+        self?.checkWord()
+    }
+    
+    private let resultLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 24, weight: .bold)
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = .systemTeal
         
+        view.backgroundColor = .systemTeal
         createSubView()
+        bindModel()
     }
     
     private func createSubView() {
@@ -21,33 +44,75 @@ final class FeedViewController: UIViewController {
         stackView.axis = .vertical
         stackView.spacing = 10
         stackView.distribution = .fillEqually
+        
         view.addSubview(stackView)
+        
         NSLayoutConstraint.activate([
-            stackView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
+            stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             stackView.heightAnchor.constraint(equalToConstant: 200),
-            stackView.widthAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.widthAnchor, constant: -32)
+            stackView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, constant: -32)
         ])
-        addPostButton(title: "Post number One", color: .systemPurple, to: stackView, selector: #selector(tapPostButton))
-        addPostButton(title: "Post number Two", color: .systemIndigo, to: stackView, selector: #selector(tapPostButton))
+        
+        addPostButton(
+            title: "Post number One",
+            color: .systemPurple,
+            to: stackView
+        ) { [weak self] in
+            self?.openPost(at: 0)
+        }
+        
+        addPostButton(
+            title: "Post number Two",
+            color: .systemIndigo,
+            to: stackView
+        ) { [weak self] in
+            self?.openPost(at: 1)
+        }
+        
+        stackView.addArrangedSubview(textField)
+        stackView.addArrangedSubview(checkGuessButton)
+        stackView.addArrangedSubview(resultLabel)
     }
     
-    private func addPostButton(title: String, color: UIColor, to view: UIStackView, selector: Selector) {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(title, for: .normal)
-        button.backgroundColor = color
-        button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = LayoutConstants.cornerRadius
-        button.addTarget(self, action: selector, for: .touchUpInside)
-        view.addArrangedSubview(button)
+    private func addPostButton(
+        title: String,
+        color: UIColor,
+        to stackView: UIStackView,
+        action: @escaping () -> Void
+    ) {
+        let button = CustomButton(
+            title: title,
+            backgroundColor: color,
+            action: action
+        )
+        
+        stackView.addArrangedSubview(button)
     }
     
-    @objc func tapPostButton() {
-        let post = postExamples[0]
+    private func openPost(at index: Int) {
+        let post = postExamples[index]
         
         let postVC = PostViewController()
         postVC.post = post
         navigationController?.pushViewController(postVC, animated: true)
+    }
+    
+    private func bindModel() {
+        model.onCheckResult = { [weak self] isCorrect in
+            self?.resultLabel.text = isCorrect ? "Correct!" : "Try again."
+            self?.resultLabel.textColor = isCorrect ? .green : .red
+            
+        }
+    }
+    
+    private func checkWord() {
+        guard let text = textField.text, !text.isEmpty else {
+            resultLabel.text = "Please, enter a word."
+            resultLabel.textColor = .white
+            return
+        }
+        
+        model.check(word: text)
     }
 }
