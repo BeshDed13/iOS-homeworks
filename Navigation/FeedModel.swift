@@ -9,12 +9,9 @@ import Foundation
 
 final class FeedModel {
     
-    private let secretWord = "Secret word"
+    private let secretWord = "secret word"
     
-    var onCheckResult: ((Bool) -> Void)?
-    
-    func check(word: String) {
-        let isCorrect = word == secretWord
-        onCheckResult?(isCorrect)
+    func check(word: String) -> Bool {
+        return word.lowercased() == secretWord
     }
 }

@@ -7,7 +7,7 @@ import UIKit
 
 final class FeedViewController: UIViewController {
     
-    private let model = FeedModel()
+    private let viewModel = FeedViewModel()
     
     private let textField: UITextField = {
         let textField = UITextField()
@@ -35,7 +35,7 @@ final class FeedViewController: UIViewController {
         
         view.backgroundColor = .systemTeal
         createSubView()
-        bindModel()
+        bindViewModel()
     }
     
     private func createSubView() {
@@ -98,8 +98,8 @@ final class FeedViewController: UIViewController {
         navigationController?.pushViewController(postVC, animated: true)
     }
     
-    private func bindModel() {
-        model.onCheckResult = { [weak self] isCorrect in
+    private func bindViewModel() {
+        viewModel.onResult = { [weak self] isCorrect in
             self?.resultLabel.text = isCorrect ? "Correct!" : "Try again."
             self?.resultLabel.textColor = isCorrect ? .green : .red
             
@@ -107,12 +107,6 @@ final class FeedViewController: UIViewController {
     }
     
     private func checkWord() {
-        guard let text = textField.text, !text.isEmpty else {
-            resultLabel.text = "Please, enter a word."
-            resultLabel.textColor = .white
-            return
-        }
-        
-        model.check(word: text)
+        viewModel.checkWord(textField.text)
     }
 }
