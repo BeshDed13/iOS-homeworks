@@ -7,6 +7,8 @@ import UIKit
 
 final class FeedViewController: UIViewController {
     
+    weak var coordinator: FeedCoordinator?
+    
     private let viewModel = FeedViewModel()
     
     private let textField: UITextField = {
@@ -95,7 +97,7 @@ final class FeedViewController: UIViewController {
         
         let postVC = PostViewController()
         postVC.post = post
-        navigationController?.pushViewController(postVC, animated: true)
+        coordinator?.openPost(post)
     }
     
     private func bindViewModel() {

@@ -7,6 +7,8 @@ import UIKit
 
 final class LoginViewController: UIViewController {
     
+    weak var coordinator: ProfileCoordinator?
+    
     var loginDelegate: LoginViewControllerDelegate?
     
     private lazy var userService: UserService = {
@@ -191,10 +193,7 @@ final class LoginViewController: UIViewController {
         
         if delegate.check(login: login, password: password) {
             guard let user = userService.getUser(login: login) else { return }
-
-            let profileVC = ProfileViewController()
-            profileVC.user = user
-            navigationController?.setViewControllers([profileVC], animated: true)
+            coordinator?.didLoginSuccessfully(user: user)
         } else {
             let alert = UIAlertController(title: "Ошибка", message: "Неверный логин или пароль", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default))
