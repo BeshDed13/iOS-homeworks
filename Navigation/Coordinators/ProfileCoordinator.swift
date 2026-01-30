@@ -9,41 +9,30 @@ import Foundation
 import UIKit
 
 final class ProfileCoordinator: AppCoordinator {
-    
+
     var childCoordinators: [AppCoordinator] = []
     var navigationController: UINavigationController
-    
-    private var lastUser: User?
-    
-    private var isAuthorized = false
-    
+
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
-    
+
     func start() {
-        if isAuthorized, let user = lastUser {
-            showProfile(user: user)
-        } else {
-            showLogin()
-        }
+        let loginVC = LoginViewController()
+        loginVC.coordinator = self
+        loginVC.loginDelegate = self
+        navigationController.setViewControllers([loginVC], animated: false)
     }
-    
-    private func showProfile(user: User) {
-        let profileViewController = ProfileViewController()
-        profileViewController.coordinator = self
-        profileViewController.user = user
-        navigationController.setViewControllers([profileViewController], animated: false)
-    }
-    
-    private func showLogin() {
-        let loginViewController = LoginViewController()
-        loginViewController.coordinator = self
-        navigationController.setViewControllers([loginViewController], animated: false)
-    }
-    
+
     func didLoginSuccessfully(user: User) {
-        isAuthorized = true
-        showProfile(user: user)
+        let profileVC = ProfileViewController()
+        profileVC.user = user
+        navigationController.setViewControllers([profileVC], animated: true)
+    }
+}
+
+extension ProfileCoordinator: LoginViewControllerDelegate {
+    func check(login: String, password: String) -> Bool {
+        return login == "adm" && password == "1234"
     }
 }

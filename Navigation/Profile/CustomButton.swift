@@ -21,6 +21,7 @@ final class CustomButton: UIButton {
     ) {
         self.action = action
         super.init(frame: .zero)
+        addTarget(self, action: #selector(didTap), for: .touchUpInside)
         
         setupView(
             title: title,

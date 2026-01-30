@@ -9,19 +9,20 @@ import Foundation
 import UIKit
 
 final class FeedCoordinator: AppCoordinator {
-    
+
     var childCoordinators: [AppCoordinator] = []
     var navigationController: UINavigationController
-    
+
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
-    
+
     func start() {
         let feedViewController = FeedViewController()
+        feedViewController.coordinator = self
         navigationController.pushViewController(feedViewController, animated: false)
     }
-    
+
     func openPost(_ post: Post) {
         let postViewController = PostViewController()
         postViewController.post = post

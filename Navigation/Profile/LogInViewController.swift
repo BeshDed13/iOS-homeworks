@@ -185,6 +185,7 @@ final class LoginViewController: UIViewController {
     // MARK: - Event handlers
 
     @objc private func touchLoginButton() {
+        print("Login button tapped, coordinator:", coordinator as Any)
         guard let login = loginField.text,
               let password = passwordField.text,
               let delegate = loginDelegate else {
