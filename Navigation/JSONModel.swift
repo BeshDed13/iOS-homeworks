@@ -16,8 +16,8 @@ struct JSON {
 
 struct Planet: Decodable {
     let name: String
-    let rotationPeriod: Int
-    let orbitalPeriod: Int
+    let rotationPeriod: String
+    let orbitalPeriod: String
     
     enum CodingKeys: String, CodingKey {
         case name
