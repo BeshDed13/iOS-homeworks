@@ -13,6 +13,7 @@ protocol LoginFactory {
 
 struct MyLoginFactory: LoginFactory {
     func makeLoginInspector() -> LoginInspector {
-        return LoginInspector()
+        let checkerService = Checker()
+        return LoginInspector(checkerService: checkerService)
     }
 }

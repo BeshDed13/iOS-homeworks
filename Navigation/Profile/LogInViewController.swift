@@ -4,22 +4,13 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 final class LoginViewController: UIViewController {
     
     weak var coordinator: ProfileCoordinator?
     
     var loginDelegate: LoginViewControllerDelegate?
-    
-    private lazy var userService: UserService = {
-        guard let avatar = UIImage(named: "teo") else { fatalError("Missing teo.png") }
-        let user = User(login: "adm", fullName: "Dmitriy Ilinskiy", status: "Online", avatar: avatar)
-    #if DEBUG
-        return TestUserService(user: user)
-    #else
-        return CurrentUserService(user: user)
-    #endif
-    }()
     
     // MARK: Visual content
     
@@ -55,7 +46,7 @@ final class LoginViewController: UIViewController {
         return stack
     }()
     
-    var loginButton: UIButton = {
+    lazy var loginButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         
@@ -65,7 +56,7 @@ final class LoginViewController: UIViewController {
             button.setBackgroundImage(pixel.image(alpha: 0.6), for: .highlighted)
             button.setBackgroundImage(pixel.image(alpha: 0.4), for: .disabled)
         }
-
+        
         button.setTitle("Login", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(touchLoginButton), for: .touchUpInside)
@@ -133,32 +124,32 @@ final class LoginViewController: UIViewController {
         
         setupConstraints()
     }
-
+    
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-
+            
             loginScrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             loginScrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             loginScrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             loginScrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-
+            
             contentView.topAnchor.constraint(equalTo: loginScrollView.topAnchor),
             contentView.trailingAnchor.constraint(equalTo: loginScrollView.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: loginScrollView.bottomAnchor),
             contentView.leadingAnchor.constraint(equalTo: loginScrollView.leadingAnchor),
             contentView.centerXAnchor.constraint(equalTo: loginScrollView.centerXAnchor),
             contentView.centerYAnchor.constraint(equalTo: loginScrollView.centerYAnchor),
-
+            
             vkLogo.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 120),
             vkLogo.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             vkLogo.heightAnchor.constraint(equalToConstant: 100),
             vkLogo.widthAnchor.constraint(equalToConstant: 100),
-
+            
             loginStackView.topAnchor.constraint(equalTo: vkLogo.bottomAnchor, constant: 120),
             loginStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstants.leadingMargin),
             loginStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
             loginStackView.heightAnchor.constraint(equalToConstant: 100),
-
+            
             loginButton.topAnchor.constraint(equalTo: loginStackView.bottomAnchor, constant: LayoutConstants.indent),
             loginButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstants.leadingMargin),
             loginButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
@@ -171,34 +162,70 @@ final class LoginViewController: UIViewController {
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(keyboardShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         nc.addObserver(self, selector: #selector(keyboardHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-
+        
     }
-
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         let nc = NotificationCenter.default
         nc.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         nc.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-
-    }
         
+    }
+    
     // MARK: - Event handlers
-
+    
     @objc private func touchLoginButton() {
-        print("Login button tapped, coordinator:", coordinator as Any)
+        
         guard let login = loginField.text,
-              let password = passwordField.text,
-              let delegate = loginDelegate else {
+        let password = passwordField.text,
+        !login.isEmpty,
+        !password.isEmpty else {
+            
+            showAlert(message: "Please fill in both fields")
             return
         }
+        loginDelegate?.checkCredentials(login: login, password: password) { [weak self] result in
+            
+            DispatchQueue.main.async {
+                
+                switch result {
+                    
+                case .success(let user):
+                    self?.coordinator?.didLoginSuccessfully(user: user)
+                case .failure(let error):
+                    self?.handleAuthError(error, login: login, password: password)
+                    
+                }
+            }
+            
+        }
+    }
+    
+    private func handleAuthError(_ error: Error, login: String, password: String) {
         
-        if delegate.check(login: login, password: password) {
-            guard let user = userService.getUser(login: login) else { return }
-            coordinator?.didLoginSuccessfully(user: user)
+        let nsError = error as NSError
+        
+        if nsError.code == AuthErrorCode.userNotFound.rawValue {
+            
+            loginDelegate?.signUp(login: login, password: password) { [weak self] result in
+                
+                DispatchQueue.main.async {
+                    
+                    switch result {
+                        
+                    case .success(let user):
+                        self?.coordinator?.didLoginSuccessfully(user: user)
+                    case .failure(let error):
+                        self?.showAlert(message: error.localizedDescription)
+                    }
+                }
+            }
+        } else if nsError.code == AuthErrorCode.wrongPassword.rawValue {
+            
+            showAlert(message: "Wrong password")
         } else {
-            let alert = UIAlertController(title: "Ошибка", message: "Неверный логин или пароль", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            present(alert, animated: true)
+            showAlert(message: error.localizedDescription)
         }
     }
     
@@ -208,19 +235,26 @@ final class LoginViewController: UIViewController {
             loginScrollView.verticalScrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
         }
     }
-
+    
     @objc private func keyboardHide(notification: NSNotification) {
         loginScrollView.contentOffset = CGPoint(x: 0, y: 0)
     }
-}
-
-// MARK: - Extension
-
-extension LoginViewController: UITextFieldDelegate {
     
-    // tap 'done' on the keyboard
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
+    private func showAlert(message: String) {
+        
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 }
+    // MARK: - Extension
+    
+    extension LoginViewController: UITextFieldDelegate {
+        
+        // tap 'done' on the keyboard
+        func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+            textField.resignFirstResponder()
+            return true
+        }
+    }

@@ -4,6 +4,7 @@
 //
 
 import UIKit
+import FirebaseCore
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -33,6 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         NetworkService.request(for: appConfigutation)
+        FirebaseApp.configure()
         
         // create tab bar with feed and profile items
         let window = UIWindow(frame: UIScreen.main.bounds)
