@@ -5,6 +5,7 @@
 
 import UIKit
 import FirebaseCore
+import FirebaseAuth
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -48,6 +49,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.window = window
         return true
+    }
+    
+    func applicationWillTerminate(_ application: UIApplication) {
+        do {
+            try Auth.auth().signOut()
+            print("User signed out")
+        } catch {
+            print("Error signing out:", error)
+        }
     }
 }
 

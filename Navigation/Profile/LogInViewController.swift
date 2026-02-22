@@ -65,9 +65,27 @@ final class LoginViewController: UIViewController {
         return button
     }()
     
+    lazy var signupButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        if let pixel = UIImage(named: "blue_pixel") {
+            button.setBackgroundImage(pixel.image(alpha: 1), for: .normal)
+            button.setBackgroundImage(pixel.image(alpha: 0.8), for: .selected)
+            button.setBackgroundImage(pixel.image(alpha: 0.6), for: .highlighted)
+            button.setBackgroundImage(pixel.image(alpha: 0.4), for: .disabled)
+        }
+        
+        button.setTitle("Sign Up", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.addTarget(self, action: #selector(touchSignUpButton), for: .touchUpInside)
+        button.layer.cornerRadius = LayoutConstants.cornerRadius
+        button.clipsToBounds = true
+        return button
+    }()
+    
     var loginField: UITextField = {
         let login = UITextField()
-        login.text = "adm"
         login.translatesAutoresizingMaskIntoConstraints = false
         login.placeholder = "Log In"
         login.layer.borderColor = UIColor.lightGray.cgColor
@@ -84,7 +102,6 @@ final class LoginViewController: UIViewController {
     
     var passwordField: UITextField = {
         let password = UITextField()
-        password.text = "1234"
         password.translatesAutoresizingMaskIntoConstraints = false
         password.leftViewMode = .always
         password.placeholder = "Password"
@@ -114,7 +131,7 @@ final class LoginViewController: UIViewController {
         view.addSubview(loginScrollView)
         loginScrollView.addSubview(contentView)
         
-        contentView.addSubviews(vkLogo, loginStackView, loginButton)
+        contentView.addSubviews(vkLogo, loginStackView, loginButton, signupButton)
         
         loginStackView.addArrangedSubview(loginField)
         loginStackView.addArrangedSubview(passwordField)
@@ -154,6 +171,12 @@ final class LoginViewController: UIViewController {
             loginButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstants.leadingMargin),
             loginButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
             loginButton.heightAnchor.constraint(equalToConstant: 50),
+            
+            signupButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 10),
+            signupButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstants.leadingMargin),
+            signupButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
+            signupButton.heightAnchor.constraint(equalToConstant: 50),
+            
         ])
     }
     
@@ -178,52 +201,64 @@ final class LoginViewController: UIViewController {
     @objc private func touchLoginButton() {
         
         guard let login = loginField.text,
-        let password = passwordField.text,
-        !login.isEmpty,
-        !password.isEmpty else {
+              let password = passwordField.text,
+              !login.isEmpty,
+              !password.isEmpty else {
             
             showAlert(message: "Please fill in both fields")
             return
         }
+        
         loginDelegate?.checkCredentials(login: login, password: password) { [weak self] result in
             
             DispatchQueue.main.async {
-                
                 switch result {
-                    
                 case .success(let user):
                     self?.coordinator?.didLoginSuccessfully(user: user)
                 case .failure(let error):
-                    self?.handleAuthError(error, login: login, password: password)
-                    
+                    self?.handleAuthError(error)
                 }
             }
-            
         }
     }
     
-    private func handleAuthError(_ error: Error, login: String, password: String) {
+    @objc private func touchSignUpButton() {
+        
+        guard let login = loginField.text,
+              let password = passwordField.text,
+              !login.isEmpty,
+              !password.isEmpty else {
+            
+            showAlert(message: "Please fill in both fields")
+            return
+        }
+        
+        loginDelegate?.signUp(login: login, password: password) { [weak self] result in
+            
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let user):
+                    self?.coordinator?.didLoginSuccessfully(user: user)
+                case .failure(let error):
+                    self?.showAlert(message: error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    private func handleAuthError(_ error: Error) {
         
         let nsError = error as NSError
         
-        if nsError.code == AuthErrorCode.userNotFound.rawValue {
-            
-            loginDelegate?.signUp(login: login, password: password) { [weak self] result in
-                
-                DispatchQueue.main.async {
-                    
-                    switch result {
-                        
-                    case .success(let user):
-                        self?.coordinator?.didLoginSuccessfully(user: user)
-                    case .failure(let error):
-                        self?.showAlert(message: error.localizedDescription)
-                    }
-                }
+        if let errorCode = AuthErrorCode(rawValue: nsError.code) {
+            switch errorCode {
+            case .wrongPassword:
+                showAlert(message: "Wrong password")
+            case .userNotFound:
+                showAlert(message: "User not found")
+            default:
+                showAlert(message: error.localizedDescription)
             }
-        } else if nsError.code == AuthErrorCode.wrongPassword.rawValue {
-            
-            showAlert(message: "Wrong password")
         } else {
             showAlert(message: error.localizedDescription)
         }
