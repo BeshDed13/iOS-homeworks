@@ -23,12 +23,29 @@ final class InfoViewController: UIViewController {
         super.viewDidLoad()
 
         view.addSubview(titleLabel)
+        view.addSubview(planetLabel)
         view.backgroundColor = .systemGray6
         
         createAlertButton()
+        setupConstraints()
         
         fetchJSON()
         fetchPlanet()
+    }
+    
+    private func setupConstraints() {
+        NSLayoutConstraint.activate([
+            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            
+            planetLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            planetLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            planetLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            planetLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20)
+            
+            
+        ])
     }
     
     private func fetchJSON() {

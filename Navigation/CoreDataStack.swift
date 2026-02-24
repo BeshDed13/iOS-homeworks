@@ -16,15 +16,21 @@ final class CoreDataStack {
     
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "Navigation")
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+        container.loadPersistentStores { _, error in
             if let error = error {
                 fatalError("Unresolved error")
             }
-        })
+        }
         return container
     }()
     
     var context: NSManagedObjectContext {
         persistentContainer.viewContext
+    }
+    
+    func saveContext() throws {
+        if context.hasChanges {
+            try context.save()
+        }
     }
 }

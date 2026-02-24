@@ -96,8 +96,12 @@ extension ProfileViewController: UITableViewDelegate {
             cell.onLike = { [weak self] in
                 guard let self = self else { return }
                 postExamples[indexPath.row].likes += 1
-                self.favoritesService.save(post: postExamples[indexPath.row])
-                tableView.reloadRows(at: [indexPath], with: .automatic)
+                do {
+                    try self.favoritesService.save(post: postExamples[indexPath.row])
+                    tableView.reloadRows(at: [indexPath], with: .automatic)
+                } catch {
+                    print("Failed to save post to favorites: \(error)")
+                }
             }
             
             return cell

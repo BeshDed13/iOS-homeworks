@@ -28,12 +28,12 @@ final class FavoritesViewController: UIViewController, UITableViewDelegate {
         title = "Favorites"
         view.backgroundColor = .systemBackground
         setupTableView()
-        loadFavorites()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         loadFavorites()
+        
     }
     
     private func setupTableView() {
@@ -47,11 +47,14 @@ final class FavoritesViewController: UIViewController, UITableViewDelegate {
     }
     
     private func loadFavorites() {
-        let savedPosts = favoritesService.fetchPosts()
-        posts = savedPosts.map {
-            Post(author: $0.author ?? "", description: $0.postDescription ?? "", image: $0.image ?? "", likes: Int($0.likes), views: Int($0.views))
+        do {
+            posts = try favoritesService.fetchPosts()
+            tableView.reloadData()
+        } catch {
+            print("Failed to load favorites: \(error.localizedDescription)")
+            posts = []
+            tableView.reloadData()
         }
-        tableView.reloadData()
     }
 }
 
