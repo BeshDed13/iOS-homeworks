@@ -8,6 +8,7 @@ import UIKit
 class PostTableViewCell: UITableViewCell {
     
     private var viewCounter = 0
+    var onLike: (() -> Void)?
 
     // MARK: Visual objects
     
@@ -60,6 +61,7 @@ class PostTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubviews(postAuthor, postImage, postDescription, postLikes, postViews)
         setupConstraints()
+        setupGesture()
         self.selectionStyle = .default
     }
 
@@ -90,6 +92,12 @@ class PostTableViewCell: UITableViewCell {
             postViews.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -LayoutConstants.indent)
         ])
     }
+    
+    private func setupGesture() {
+        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap))
+        doubleTap.numberOfTapsRequired = 2
+        contentView.addGestureRecognizer(doubleTap)
+    }
 
     // MARK: - Run loop
     
@@ -105,6 +113,10 @@ class PostTableViewCell: UITableViewCell {
     func incrementPostViewsCounter() {
         viewCounter += 1
         postViews.text = "Views: \(viewCounter)"
+    }
+    
+    @objc private func handleDoubleTap() {
+        onLike?()
     }
 }
 

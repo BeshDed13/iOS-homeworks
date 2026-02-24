@@ -22,14 +22,17 @@ final class TabBarCoordinator: AppCoordinator {
         
         let feedNavigationController = UINavigationController()
         let profileNavigationController = UINavigationController()
+        let favoritesNavigationController = UINavigationController()
         
         let feedCoordinator = FeedCoordinator(navigationController: feedNavigationController)
         let profileCoordinator = ProfileCoordinator(navigationController: profileNavigationController)
+        let favoritesCoordinator = FavoritesCoordinator(navigationController: favoritesNavigationController)
         
-        childCoordinators = [profileCoordinator, feedCoordinator]
+        childCoordinators = [profileCoordinator, feedCoordinator, favoritesCoordinator]
         
         feedCoordinator.start()
         profileCoordinator.start()
+        favoritesCoordinator.start()
         
         profileNavigationController.tabBarItem = UITabBarItem(title: "Profile",
                                             image: UIImage(systemName: "person.crop.circle"),
@@ -39,7 +42,11 @@ final class TabBarCoordinator: AppCoordinator {
                                          image: UIImage(systemName: "text.bubble"),
                                          selectedImage: UIImage(systemName: "text.bubble.fill"))
         
-        tabBarController.viewControllers = [profileNavigationController, feedNavigationController]
+        favoritesNavigationController.tabBarItem = UITabBarItem(title: "Favorites",
+                                            image: UIImage(systemName: "star"),
+                                            selectedImage: UIImage(systemName: "star.fill"))
+        
+        tabBarController.viewControllers = [profileNavigationController, feedNavigationController, favoritesNavigationController]
         
         navigationController.setViewControllers([tabBarController], animated: false)
 

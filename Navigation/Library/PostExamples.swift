@@ -3,7 +3,7 @@
 //  Navigation
 //
 
-let postExamples: [Post] = [
+var postExamples: [Post] = [
     Post(author: "Kat Vadam",
          description: "Zelda Metal Band Master Sword is Kickstarting a New Album, and We’ve Got the Inside Scoop",
          image: "post1",

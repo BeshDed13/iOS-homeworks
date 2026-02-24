@@ -13,6 +13,8 @@ final class ProfileViewController: UIViewController {
     static let photoIdent = "photo"
     static let postIdent = "post"
     
+    private let favoritesService = FavoritesService()
+    
     var user: User!
     
     static var postTableView: UITableView = {
@@ -86,8 +88,18 @@ extension ProfileViewController: UITableViewDelegate {
             let cell = Self.postTableView.dequeueReusableCell(withIdentifier: Self.photoIdent, for: indexPath) as! PhotosTableViewCell
             return cell
         case 1:
-            let cell = Self.postTableView.dequeueReusableCell(withIdentifier: Self.postIdent, for: indexPath) as! PostTableViewCell
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: Self.postIdent,
+                for: indexPath
+            ) as! PostTableViewCell
             cell.configPostArray(post: postExamples[indexPath.row])
+            cell.onLike = { [weak self] in
+                guard let self = self else { return }
+                postExamples[indexPath.row].likes += 1
+                self.favoritesService.save(post: postExamples[indexPath.row])
+                tableView.reloadRows(at: [indexPath], with: .automatic)
+            }
+            
             return cell
         default:
             assertionFailure("no registered section")
