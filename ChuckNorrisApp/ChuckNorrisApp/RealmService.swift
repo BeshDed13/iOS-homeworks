@@ -24,7 +24,15 @@ class Quote: Object {
 
 class RealmService {
     
-    let realm = try! Realm()
+    let realm: Realm
+    
+    init() {
+        let encodingService = EncodingService()
+        let key = encodingService.getKey()
+        var config = Realm.Configuration()
+        config.encryptionKey = key
+        realm = try! Realm(configuration: config)
+    }
     
     func save(_ apiQuote: APIQuote) {
         try! realm.write {
