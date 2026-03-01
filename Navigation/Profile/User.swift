@@ -5,7 +5,6 @@
 //  Created by Дмитрий Ильинский on 17.01.2026.
 //
 
-import Foundation
 import UIKit
 
 final class User {

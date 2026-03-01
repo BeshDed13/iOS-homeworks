@@ -5,7 +5,6 @@
 //  Created by Дмитрий Ильинский on 24.02.2026.
 //
 
-import Foundation
 import UIKit
 
 final class FavoritesCoordinator: AppCoordinator {

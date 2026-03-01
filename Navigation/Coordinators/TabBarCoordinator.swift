@@ -5,7 +5,6 @@
 //  Created by Дмитрий Ильинский on 29.01.2026.
 //
 
-import Foundation
 import UIKit
 
 final class TabBarCoordinator: AppCoordinator {
@@ -23,16 +22,19 @@ final class TabBarCoordinator: AppCoordinator {
         let feedNavigationController = UINavigationController()
         let profileNavigationController = UINavigationController()
         let favoritesNavigationController = UINavigationController()
+        let mapNavigationController = UINavigationController()
         
         let feedCoordinator = FeedCoordinator(navigationController: feedNavigationController)
         let profileCoordinator = ProfileCoordinator(navigationController: profileNavigationController)
         let favoritesCoordinator = FavoritesCoordinator(navigationController: favoritesNavigationController)
+        let mapCoordinator = MapCoordinator(navigationController: mapNavigationController)
         
-        childCoordinators = [profileCoordinator, feedCoordinator, favoritesCoordinator]
+        childCoordinators = [profileCoordinator, feedCoordinator, favoritesCoordinator, mapCoordinator]
         
         feedCoordinator.start()
         profileCoordinator.start()
         favoritesCoordinator.start()
+        mapCoordinator.start()
         
         profileNavigationController.tabBarItem = UITabBarItem(title: "Profile",
                                             image: UIImage(systemName: "person.crop.circle"),
@@ -45,8 +47,12 @@ final class TabBarCoordinator: AppCoordinator {
         favoritesNavigationController.tabBarItem = UITabBarItem(title: "Favorites",
                                             image: UIImage(systemName: "star"),
                                             selectedImage: UIImage(systemName: "star.fill"))
+        mapNavigationController.tabBarItem = UITabBarItem(title: "Map",
+                                                          image: UIImage(systemName: "map"),
+                                                          selectedImage: UIImage(systemName: "map.fill"))
+                                                          
         
-        tabBarController.viewControllers = [profileNavigationController, feedNavigationController, favoritesNavigationController]
+        tabBarController.viewControllers = [profileNavigationController, feedNavigationController, favoritesNavigationController, mapNavigationController]
         
         navigationController.setViewControllers([tabBarController], animated: false)
 
