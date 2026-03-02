@@ -2,35 +2,62 @@
 //  AppDelegate.swift
 //  Navigation
 //
-//  Created by Дмитрий Ильинский on 07.11.2025.
-//
 
 import UIKit
+import FirebaseCore
+import FirebaseAuth
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+    var window: UIWindow?
+    var coordinator: TabBarCoordinator?
+    
+    var appConfigutation: AppConfiguration!
+    
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        let urls = [
+            URL(string: "https://swapi.dev/api/people/8/")!,
+            URL(string: "https://swapi.dev/api/starships/3/")!,
+            URL(string: "https://swapi.dev/api/planets/5/")!
+        ]
+        
+        let randIndex = Int.random(in: 0..<urls.count)
+        
+        switch randIndex {
+        case 0:
+            appConfigutation = .people(urls[0])
+        case 1:
+            appConfigutation = .starships(urls[1])
+        default:
+            appConfigutation = .planets(urls[2])
+        }
+        
+        NetworkService.request(for: appConfigutation)
+        FirebaseApp.configure()
+        
+        // create tab bar with feed and profile items
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        let navigationController = UINavigationController()
+        
+        coordinator = TabBarCoordinator(navigationController: navigationController)
+        coordinator?.start()
+        
+        window.rootViewController = coordinator?.navigationController
+        window.makeKeyAndVisible()
+        
+        self.window = window
         return true
     }
-
-    // MARK: UISceneSession Lifecycle
-
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        // Called when a new scene session is being created.
-        // Use this method to select a configuration to create the new scene with.
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+    
+    func applicationWillTerminate(_ application: UIApplication) {
+        do {
+            try Auth.auth().signOut()
+            print("User signed out")
+        } catch {
+            print("Error signing out:", error)
+        }
     }
-
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        // Called when the user discards a scene session.
-        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
-        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
-    }
-
-
 }
 
