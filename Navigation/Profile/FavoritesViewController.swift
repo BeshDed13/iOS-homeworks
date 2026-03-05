@@ -24,7 +24,7 @@ final class FavoritesViewController: UIViewController, UITableViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Favorites"
+        title = "title_favorites".localized
         view.backgroundColor = .systemBackground
         setupTableView()
     }

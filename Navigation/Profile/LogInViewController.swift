@@ -57,7 +57,7 @@ final class LoginViewController: UIViewController {
             button.setBackgroundImage(pixel.image(alpha: 0.4), for: .disabled)
         }
         
-        button.setTitle("Login", for: .normal)
+        button.setTitle("button_login".localized, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(touchLoginButton), for: .touchUpInside)
         button.layer.cornerRadius = LayoutConstants.cornerRadius
@@ -76,7 +76,7 @@ final class LoginViewController: UIViewController {
             button.setBackgroundImage(pixel.image(alpha: 0.4), for: .disabled)
         }
         
-        button.setTitle("Sign Up", for: .normal)
+        button.setTitle("button_signup".localized, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(touchSignUpButton), for: .touchUpInside)
         button.layer.cornerRadius = LayoutConstants.cornerRadius
@@ -87,7 +87,7 @@ final class LoginViewController: UIViewController {
     var loginField: UITextField = {
         let login = UITextField()
         login.translatesAutoresizingMaskIntoConstraints = false
-        login.placeholder = "Log In"
+        login.placeholder = "textField_login".localized
         login.layer.borderColor = UIColor.lightGray.cgColor
         login.layer.borderWidth = 0.25
         login.leftViewMode = .always
@@ -104,7 +104,7 @@ final class LoginViewController: UIViewController {
         let password = UITextField()
         password.translatesAutoresizingMaskIntoConstraints = false
         password.leftViewMode = .always
-        password.placeholder = "Password"
+        password.placeholder = "textField_password".localized
         password.layer.borderColor = UIColor.lightGray.cgColor
         password.layer.borderWidth = 0.25
         password.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: password.frame.height))
@@ -205,7 +205,7 @@ final class LoginViewController: UIViewController {
               !login.isEmpty,
               !password.isEmpty else {
             
-            showAlert(message: "Please fill in both fields")
+            showAlert(message: "alert_fill_fields".localized)
             return
         }
         
@@ -229,7 +229,7 @@ final class LoginViewController: UIViewController {
               !login.isEmpty,
               !password.isEmpty else {
             
-            showAlert(message: "Please fill in both fields")
+            showAlert(message: "alert_fill_fields".localized)
             return
         }
         
@@ -253,9 +253,9 @@ final class LoginViewController: UIViewController {
         if let errorCode = AuthErrorCode(rawValue: nsError.code) {
             switch errorCode {
             case .wrongPassword:
-                showAlert(message: "Wrong password")
+                showAlert(message: "alert_wrong_password".localized)
             case .userNotFound:
-                showAlert(message: "User not found")
+                showAlert(message: "alert_user_not_found".localized)
             default:
                 showAlert(message: error.localizedDescription)
             }
@@ -277,9 +277,9 @@ final class LoginViewController: UIViewController {
     
     private func showAlert(message: String) {
         
-        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        let alert = UIAlertController(title: "alert_error".localized, message: message, preferredStyle: .alert)
         
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        alert.addAction(UIAlertAction(title: "alert_ok".localized, style: .default))
         present(alert, animated: true)
     }
 }
