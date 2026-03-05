@@ -13,7 +13,7 @@ final class PostViewController: UIViewController {
         super.viewDidLoad()
         
         title = post?.author ?? "-"
-        view.backgroundColor = .systemYellow
+        view.backgroundColor = UIColor(named: "SecondColor")
         
         // add a button in the navigtion bar
         let barButton = UIBarButtonItem(title: "Info", style: .done, target: self, action: #selector(tapInfoButton))

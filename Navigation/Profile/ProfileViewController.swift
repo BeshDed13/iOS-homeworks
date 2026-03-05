@@ -38,6 +38,7 @@ final class ProfileViewController: UIViewController {
         #endif
         
         view.addSubview(Self.postTableView)
+        view.backgroundColor = UIColor(named: "FirstColor")
         setupConstraints()
         
         Self.postTableView.dataSource = self

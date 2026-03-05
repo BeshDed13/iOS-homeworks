@@ -25,7 +25,7 @@ final class FavoritesViewController: UIViewController, UITableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "title_favorites".localized
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = UIColor(named: "FirstColor")
         setupTableView()
     }
     
@@ -41,6 +41,7 @@ final class FavoritesViewController: UIViewController, UITableViewDelegate {
         tableView.frame = view.bounds
         tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         tableView.register(PostTableViewCell.self, forCellReuseIdentifier: "post")
+        tableView.backgroundColor = UIColor(named: "FirstColor")
         view.addSubview(tableView)
         
     }

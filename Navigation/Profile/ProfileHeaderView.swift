@@ -42,7 +42,7 @@ final class ProfileHeaderView: UITableViewHeaderFooterView {
         fullNameLabel.translatesAutoresizingMaskIntoConstraints = false
         fullNameLabel.text = "Teo West"
         fullNameLabel.font = .boldSystemFont(ofSize: 18)
-        fullNameLabel.textColor = .black
+        fullNameLabel.textColor = UIColor(named: "TextColor")
         addSubview(fullNameLabel)
         NSLayoutConstraint.activate([
             fullNameLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
@@ -56,7 +56,7 @@ final class ProfileHeaderView: UITableViewHeaderFooterView {
         statusLabel.translatesAutoresizingMaskIntoConstraints = false
         statusLabel.text = statusText
         statusLabel.font = .systemFont(ofSize: 17)
-        statusLabel.textColor = .black
+        statusLabel.textColor = UIColor(named: "TextColor")
         addSubview(statusLabel)
         NSLayoutConstraint.activate([
             statusLabel.topAnchor.constraint(equalTo: fullNameLabel.bottomAnchor, constant: 16),
@@ -68,8 +68,8 @@ final class ProfileHeaderView: UITableViewHeaderFooterView {
     
     private func setupStatusTextField() {
         statusTextField.translatesAutoresizingMaskIntoConstraints = false
-        statusTextField.textColor = .darkGray
-        statusTextField.backgroundColor = .white
+        statusTextField.textColor = UIColor(named: "TextColor")
+        statusTextField.backgroundColor = UIColor(named: "FirstColor")
         
         let paddingView: UIView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 20))
         statusTextField.leftView = paddingView

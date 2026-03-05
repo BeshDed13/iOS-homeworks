@@ -121,7 +121,7 @@ final class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = UIColor(named: "FirstColor")
         navigationController?.navigationBar.isHidden = true
         
         setupViews()

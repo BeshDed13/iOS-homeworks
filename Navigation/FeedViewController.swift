@@ -20,7 +20,7 @@ final class FeedViewController: UIViewController {
     
     private lazy var checkGuessButton = CustomButton(
         title: "Check",
-        backgroundColor: .systemGreen
+        backgroundColor: UIColor(named: "SecondColor")!
     ) { [weak self] in
         self?.checkWord()
     }
@@ -35,7 +35,7 @@ final class FeedViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .systemTeal
+        view.backgroundColor = UIColor(named: "FirstColor")
         createSubView()
         bindViewModel()
     }
