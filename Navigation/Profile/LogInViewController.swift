@@ -10,7 +10,7 @@ final class LoginViewController: UIViewController {
     
     weak var coordinator: ProfileCoordinator?
     
-    var loginDelegate: LoginViewControllerDelegate?
+    private let viewModel = LogInViewModel()
     
     // MARK: Visual content
     
@@ -209,14 +209,15 @@ final class LoginViewController: UIViewController {
             return
         }
         
-        loginDelegate?.checkCredentials(login: login, password: password) { [weak self] result in
+        viewModel.logIn(email: login, password: password) { [weak self] result in
             
             DispatchQueue.main.async {
                 switch result {
                 case .success(let user):
                     self?.coordinator?.didLoginSuccessfully(user: user)
                 case .failure(let error):
-                    self?.handleAuthError(error)
+                    let message = self?.viewModel.handleAuthError(error)
+                    self?.showAlert(message: message ?? "")
                 }
             }
         }
@@ -233,14 +234,15 @@ final class LoginViewController: UIViewController {
             return
         }
         
-        loginDelegate?.signUp(login: login, password: password) { [weak self] result in
+        viewModel.signUp(email: login, password: password) { [weak self] result in
             
             DispatchQueue.main.async {
                 switch result {
                 case .success(let user):
                     self?.coordinator?.didLoginSuccessfully(user: user)
                 case .failure(let error):
-                    self?.showAlert(message: error.localizedDescription)
+                    let message = self?.viewModel.handleAuthError(error)
+                    self?.showAlert(message: message ?? "")
                 }
             }
         }
