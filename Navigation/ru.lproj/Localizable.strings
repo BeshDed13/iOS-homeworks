@@ -1,0 +1,26 @@
+/* 
+  Localizable.strings
+  Navigation
+
+  Created by Дмитрий Ильинский on 05.03.2026.
+  
+*/
+
+"tab_profile" = "Профиль";
+"tab_feed" = "Лента";
+"tab_favorites" = "Избранное";
+"tab_map" = "Карты";
+
+"textField_login" = "Почта";
+"textField_password" = "Пароль";
+
+"button_login" = "Войти";
+"button_signup" = "Зарегистрироваться";
+
+"alert_error" = "Ошибка";
+"alert_fill_fields" = "Пожалуйста, заполните оба поля";
+"alert_wrong_password" = "Неверный пароль";
+"alert_user_not_found" = "Пользователь не найден";
+"alert_ok" = "ОК";
+
+"title_favorites" = "Избранное";
