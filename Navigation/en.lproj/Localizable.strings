@@ -16,11 +16,13 @@
 
 "button_login" = "Log In";
 "button_signup" = "Sign Up";
+"biometric_button" = "Use FaceID/TouchID";
 
 "alert_error" = "Error";
 "alert_fill_fields" = "Please fill in both fields";
 "alert_wrong_password" = "Wrong password";
 "alert_user_not_found" = "User not found";
 "alert_ok" = "OK";
+"alert_authentication_failed" = "Authentication failed";
 
 "title_favorites" = "Favorites";

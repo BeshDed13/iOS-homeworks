@@ -15,6 +15,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var appConfigutation: AppConfiguration!
     
+    let localNotificationsService = LocalNotificationsService()
+    
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         let urls = [
@@ -36,6 +38,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         NetworkService.request(for: appConfigutation)
         FirebaseApp.configure()
+        
+        localNotificationsService.registeForLatestUpdatesIfPossible()
         
         // create tab bar with feed and profile items
         let window = UIWindow(frame: UIScreen.main.bounds)

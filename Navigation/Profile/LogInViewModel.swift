@@ -10,6 +10,8 @@ import FirebaseAuth
 
 final class LogInViewModel {
     
+    private let biometricAuthentication = LocalAuthorizationService()
+    
     func logIn(
         email: String,
         password: String,
@@ -78,5 +80,11 @@ final class LogInViewModel {
         }
         
         return error.localizedDescription
+    }
+    
+    func logInWithBiometrics(completion: @escaping (Bool) -> Void) {
+        biometricAuthentication.authorizeIfPossible { success in
+            completion(success)
+        }
     }
 }

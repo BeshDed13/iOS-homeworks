@@ -16,11 +16,13 @@
 
 "button_login" = "Войти";
 "button_signup" = "Зарегистрироваться";
+"biometric_button" = "Использовать FaceID/TouchID";
 
 "alert_error" = "Ошибка";
 "alert_fill_fields" = "Пожалуйста, заполните оба поля";
 "alert_wrong_password" = "Неверный пароль";
 "alert_user_not_found" = "Пользователь не найден";
 "alert_ok" = "ОК";
+"alert_authentication_failed" = "Лицо не распознано";
 
 "title_favorites" = "Избранное";

@@ -84,6 +84,16 @@ final class LoginViewController: UIViewController {
         return button
     }()
     
+    lazy var biometricButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("biometric_button".localized, for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .gray
+        button.addTarget(self, action: #selector(touchBiometricButton), for: .touchUpInside)
+        return button
+    }()
+    
     var loginField: UITextField = {
         let login = UITextField()
         login.translatesAutoresizingMaskIntoConstraints = false
@@ -131,7 +141,7 @@ final class LoginViewController: UIViewController {
         view.addSubview(loginScrollView)
         loginScrollView.addSubview(contentView)
         
-        contentView.addSubviews(vkLogo, loginStackView, loginButton, signupButton)
+        contentView.addSubviews(vkLogo, loginStackView, loginButton, signupButton, biometricButton)
         
         loginStackView.addArrangedSubview(loginField)
         loginStackView.addArrangedSubview(passwordField)
@@ -177,6 +187,11 @@ final class LoginViewController: UIViewController {
             signupButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
             signupButton.heightAnchor.constraint(equalToConstant: 50),
             
+            biometricButton.topAnchor.constraint(equalTo: signupButton.bottomAnchor, constant: 10),
+            biometricButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstants.leadingMargin),
+            biometricButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
+            biometricButton.heightAnchor.constraint(equalToConstant: 50),
+            
         ])
     }
     
@@ -214,6 +229,7 @@ final class LoginViewController: UIViewController {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let user):
+                    UserStorage.shared.save(user)
                     self?.coordinator?.didLoginSuccessfully(user: user)
                 case .failure(let error):
                     let message = self?.viewModel.handleAuthError(error)
@@ -239,11 +255,29 @@ final class LoginViewController: UIViewController {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let user):
+                    UserStorage.shared.save(user)
                     self?.coordinator?.didLoginSuccessfully(user: user)
                 case .failure(let error):
                     let message = self?.viewModel.handleAuthError(error)
                     self?.showAlert(message: message ?? "")
                 }
+            }
+        }
+    }
+    
+    @objc private func touchBiometricButton() {
+        viewModel.logInWithBiometrics { [weak self] success in
+            guard let self = self else { return }
+            
+            if success {
+                guard let user = UserStorage.shared.getUser() else {
+                    self.showAlert(message: "alert_user_not_found".localized)
+                    return
+                }
+                
+                self.coordinator?.didLoginSuccessfully(user: user)
+            } else {
+                self.showAlert(message: "alert_authentication_failed".localized)
             }
         }
     }
