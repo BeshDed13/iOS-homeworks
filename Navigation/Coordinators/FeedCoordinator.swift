@@ -19,12 +19,12 @@ final class FeedCoordinator: AppCoordinator {
     func start() {
         let feedViewController = FeedViewController()
         feedViewController.coordinator = self
-        navigationController.pushViewController(feedViewController, animated: false)
+        navigationController.pushViewController(feedViewController, animated: true)
     }
 
     func openPost(_ post: Post) {
         let postViewController = PostViewController()
         postViewController.post = post
-        navigationController.pushViewController(postViewController, animated: false)
+        navigationController.pushViewController(postViewController, animated: true)
     }
 }

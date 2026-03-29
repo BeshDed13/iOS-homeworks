@@ -17,7 +17,7 @@ final class ProfileHeaderView: UITableViewHeaderFooterView {
     var returnAvatarButton = UIButton()
     var avatarBackground = UIView()
     
-    private var statusText = "Ready to help"
+    private var statusText = "status_title".localized
     private var avatarOriginPoint = CGPoint()
     
     // MARK: - Setup section
@@ -97,7 +97,7 @@ final class ProfileHeaderView: UITableViewHeaderFooterView {
         setStatusButton.layer.shadowRadius = 4
         setStatusButton.layer.shadowOpacity = 0.7
         setStatusButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
-        setStatusButton.setTitle("Show status", for: .normal)
+        setStatusButton.setTitle("show_status_title".localized, for: .normal)
         setStatusButton.setTitleColor(.white, for: .normal)
         setStatusButton.addTarget(self, action: #selector(statusButtonPressed), for: .touchUpInside)
         addSubview(setStatusButton)

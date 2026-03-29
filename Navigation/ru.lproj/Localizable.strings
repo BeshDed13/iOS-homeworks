@@ -26,3 +26,18 @@
 "alert_authentication_failed" = "Лицо не распознано";
 
 "title_favorites" = "Избранное";
+
+"status_title" = "Всегда рядом";
+"label_photos_text" = "Фото";
+"bar_button_title" = "Инфо";
+"photo_gallery_title" = "Фотогалерея";
+"likes_text" = "Лайки: %d";
+"views_text" = "Просмотры: %d";
+"show_status_title" = "Показать статус";
+
+"feed_check_text" = "Проверить";
+"enter_word_textField" = "Введите слово";
+"post_number_one_title" = "Первый пост";
+"post_number_two_title" = "Второй пост";
+"result_label_one" = "Верно!";
+"result_label_two" = "Попробуйте снова!";

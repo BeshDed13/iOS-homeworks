@@ -8,7 +8,7 @@ import FirebaseAuth
 
 final class LoginViewController: UIViewController {
     
-    weak var coordinator: ProfileCoordinator?
+    weak var coordinator: LoginCoordinator?
     
     private let viewModel = LogInViewModel()
     
@@ -68,29 +68,12 @@ final class LoginViewController: UIViewController {
     lazy var signupButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        
-        if let pixel = UIImage(named: "blue_pixel") {
-            button.setBackgroundImage(pixel.image(alpha: 1), for: .normal)
-            button.setBackgroundImage(pixel.image(alpha: 0.8), for: .selected)
-            button.setBackgroundImage(pixel.image(alpha: 0.6), for: .highlighted)
-            button.setBackgroundImage(pixel.image(alpha: 0.4), for: .disabled)
-        }
-        
+        button.backgroundColor = .systemGreen
         button.setTitle("button_signup".localized, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(touchSignUpButton), for: .touchUpInside)
         button.layer.cornerRadius = LayoutConstants.cornerRadius
         button.clipsToBounds = true
-        return button
-    }()
-    
-    lazy var biometricButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("biometric_button".localized, for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .gray
-        button.addTarget(self, action: #selector(touchBiometricButton), for: .touchUpInside)
         return button
     }()
     
@@ -103,7 +86,6 @@ final class LoginViewController: UIViewController {
         login.leftViewMode = .always
         login.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: login.frame.height))
         login.keyboardType = .emailAddress
-        login.textColor = .black
         login.font = UIFont.systemFont(ofSize: 16)
         login.autocapitalizationType = .none
         login.returnKeyType = .done
@@ -119,7 +101,6 @@ final class LoginViewController: UIViewController {
         password.layer.borderWidth = 0.25
         password.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: password.frame.height))
         password.isSecureTextEntry = true
-        password.textColor = .black
         password.font = UIFont.systemFont(ofSize: 16)
         password.autocapitalizationType = .none
         password.returnKeyType = .done
@@ -141,7 +122,7 @@ final class LoginViewController: UIViewController {
         view.addSubview(loginScrollView)
         loginScrollView.addSubview(contentView)
         
-        contentView.addSubviews(vkLogo, loginStackView, loginButton, signupButton, biometricButton)
+        contentView.addSubviews(vkLogo, loginStackView, loginButton, signupButton)
         
         loginStackView.addArrangedSubview(loginField)
         loginStackView.addArrangedSubview(passwordField)
@@ -182,15 +163,10 @@ final class LoginViewController: UIViewController {
             loginButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
             loginButton.heightAnchor.constraint(equalToConstant: 50),
             
-            signupButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 10),
+            signupButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -25),
             signupButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstants.leadingMargin),
             signupButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
             signupButton.heightAnchor.constraint(equalToConstant: 50),
-            
-            biometricButton.topAnchor.constraint(equalTo: signupButton.bottomAnchor, constant: 10),
-            biometricButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstants.leadingMargin),
-            biometricButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
-            biometricButton.heightAnchor.constraint(equalToConstant: 50),
             
         ])
     }
@@ -261,23 +237,6 @@ final class LoginViewController: UIViewController {
                     let message = self?.viewModel.handleAuthError(error)
                     self?.showAlert(message: message ?? "")
                 }
-            }
-        }
-    }
-    
-    @objc private func touchBiometricButton() {
-        viewModel.logInWithBiometrics { [weak self] success in
-            guard let self = self else { return }
-            
-            if success {
-                guard let user = UserStorage.shared.getUser() else {
-                    self.showAlert(message: "alert_user_not_found".localized)
-                    return
-                }
-                
-                self.coordinator?.didLoginSuccessfully(user: user)
-            } else {
-                self.showAlert(message: "alert_authentication_failed".localized)
             }
         }
     }

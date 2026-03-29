@@ -16,7 +16,7 @@ final class PostViewController: UIViewController {
         view.backgroundColor = UIColor(named: "SecondColor")
         
         // add a button in the navigtion bar
-        let barButton = UIBarButtonItem(title: "Info", style: .done, target: self, action: #selector(tapInfoButton))
+        let barButton = UIBarButtonItem(title: "bar_button_title".localized, style: .done, target: self, action: #selector(tapInfoButton))
         navigationItem.rightBarButtonItem = barButton
     }
     

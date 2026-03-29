@@ -11,7 +11,7 @@ import FirebaseAuth
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    var coordinator: TabBarCoordinator?
+    var coordinator: LoginCoordinator?
     
     var appConfigutation: AppConfiguration!
     
@@ -45,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let window = UIWindow(frame: UIScreen.main.bounds)
         let navigationController = UINavigationController()
         
-        coordinator = TabBarCoordinator(navigationController: navigationController)
+        coordinator = LoginCoordinator(navigationController: navigationController)
         coordinator?.start()
         
         window.rootViewController = coordinator?.navigationController

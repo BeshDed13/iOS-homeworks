@@ -13,13 +13,13 @@ final class FeedViewController: UIViewController {
     
     private let textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Enter word"
+        textField.placeholder = "enter_word_textField".localized
         textField.borderStyle = .roundedRect
         return textField
     }()
     
     private lazy var checkGuessButton = CustomButton(
-        title: "Check",
+        title: "feed_check_text".localized,
         backgroundColor: UIColor(named: "SecondColor")!
     ) { [weak self] in
         self?.checkWord()
@@ -57,7 +57,7 @@ final class FeedViewController: UIViewController {
         ])
         
         addPostButton(
-            title: "Post number One",
+            title: "post_number_one_title".localized,
             color: .systemPurple,
             to: stackView
         ) { [weak self] in
@@ -65,7 +65,7 @@ final class FeedViewController: UIViewController {
         }
         
         addPostButton(
-            title: "Post number Two",
+            title: "post_number_two_title".localized,
             color: .systemIndigo,
             to: stackView
         ) { [weak self] in
@@ -102,7 +102,7 @@ final class FeedViewController: UIViewController {
     
     private func bindViewModel() {
         viewModel.onResult = { [weak self] isCorrect in
-            self?.resultLabel.text = isCorrect ? "Correct!" : "Try again."
+            self?.resultLabel.text = isCorrect ? "result_label_one".localized : "result_label_two".localized
             self?.resultLabel.textColor = isCorrect ? .green : .red
             
         }

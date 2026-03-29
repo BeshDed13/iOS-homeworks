@@ -105,14 +105,16 @@ class PostTableViewCell: UITableViewCell {
         postAuthor.text = post.author
         postDescription.text = post.description
         postImage.image = UIImage(named: post.image)
-        postLikes.text = "Likes: \(post.likes)"
+        
+        postLikes.text = String(format: NSLocalizedString("likes_text", comment: ""), post.likes)
+        
         viewCounter = post.views
-        postViews.text = "Views: \(viewCounter)"
+        postViews.text = String(format: NSLocalizedString("views_text", comment: ""), viewCounter)
     }
-    
+
     func incrementPostViewsCounter() {
         viewCounter += 1
-        postViews.text = "Views: \(viewCounter)"
+        postViews.text = String(format: NSLocalizedString("views_text", comment: ""), viewCounter)
     }
     
     @objc private func handleDoubleTap() {

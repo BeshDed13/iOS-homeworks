@@ -54,7 +54,7 @@ final class TabBarCoordinator: AppCoordinator {
         
         tabBarController.viewControllers = [profileNavigationController, feedNavigationController, favoritesNavigationController, mapNavigationController]
         
-        navigationController.setViewControllers([tabBarController], animated: false)
+        navigationController.setViewControllers([tabBarController], animated: true)
 
     }
 }

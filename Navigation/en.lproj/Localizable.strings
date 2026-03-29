@@ -26,3 +26,18 @@
 "alert_authentication_failed" = "Authentication failed";
 
 "title_favorites" = "Favorites";
+
+"status_title" = "Ready to help";
+"label_photos_text" = "Photos";
+"bar_button_title" = "Info";
+"photo_gallery_title" = "Photo Gallery";
+"likes_text" = "Likes: %d";
+"views_text" = "Views: %d";
+"show_status_title" = "Show status";
+
+"feed_check_text" = "Check";
+"enter_word_textField" = "Enter word";
+"post_number_one_title" = "Post number one";
+"post_number_two_title" = "Post number two";
+"result_label_one" = "Correct!";
+"result_label_two" = "Try again!";
