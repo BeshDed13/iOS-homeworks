@@ -28,26 +28,33 @@ final class LoginCoordinator: AppCoordinator {
         childCoordinators.append(tabBarCoordinator)
         tabBarCoordinator.start()
     }
+    
+    func showSignUp() {
+        let signUpVC = SignUpViewController(
+            coordinator: self,
+            viewModel: SignUpViewModel()
+        )
+        navigationController.pushViewController(signUpVC, animated: true)
+    }
 }
 
+ /* func signUp(login: String, password: String, completion: @escaping (Result<User, Error>) -> Void) {
     
-    func signUp(login: String, password: String, completion: @escaping (Result<User, Error>) -> Void) {
+    Auth.auth().createUser(withEmail: login, password: password) { result, error in
         
-        Auth.auth().createUser(withEmail: login, password: password) { result, error in
-            
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-
-            if let firebaseUser = Auth.auth().currentUser {
-                let user = User(
-                    login: firebaseUser.email ?? "",
-                    fullName: firebaseUser.email ?? "",
-                    status: "Online",
-                    avatar: UIImage(named: "teo")!
-                )
-                completion(.success(user))
-            }
+        if let error = error {
+            completion(.failure(error))
+            return
+        }
+        
+        if let firebaseUser = Auth.auth().currentUser {
+            let user = User(
+                login: firebaseUser.email ?? "",
+                fullName: firebaseUser.email ?? "",
+                status: "Online",
+                avatar: UIImage(named: "teo")!
+            )
+            completion(.success(user))
         }
     }
+} */

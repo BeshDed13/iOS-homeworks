@@ -216,29 +216,7 @@ final class LoginViewController: UIViewController {
     }
     
     @objc private func touchSignUpButton() {
-        
-        guard let login = loginField.text,
-              let password = passwordField.text,
-              !login.isEmpty,
-              !password.isEmpty else {
-            
-            showAlert(message: "alert_fill_fields".localized)
-            return
-        }
-        
-        viewModel.signUp(email: login, password: password) { [weak self] result in
-            
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let user):
-                    UserStorage.shared.save(user)
-                    self?.coordinator?.didLoginSuccessfully(user: user)
-                case .failure(let error):
-                    let message = self?.viewModel.handleAuthError(error)
-                    self?.showAlert(message: message ?? "")
-                }
-            }
-        }
+        coordinator?.showSignUp()
     }
     
     private func handleAuthError(_ error: Error) {

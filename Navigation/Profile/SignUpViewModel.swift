@@ -1,36 +1,36 @@
 //
-//  LogInViewModel.swift
+//  SignUpViewModel.swift
 //  Navigation
 //
-//  Created by Дмитрий Ильинский on 10.03.2026.
+//  Created by Дмитрий Ильинский on 04.04.2026.
 //
 
 import UIKit
 import FirebaseAuth
 
-final class LogInViewModel {
+final class SignUpViewModel {
     
-    func logIn(
+    func signUp(
         email: String,
         password: String,
         completion: @escaping (Result<User, Error>) -> Void) {
-
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-
+            
+        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+            
             if let error = error {
                 completion(.failure(error))
                 return
             }
-
+            
             if let firebaseUser = result?.user {
-
+                
                 let user = User(
                     login: firebaseUser.email ?? "",
                     fullName: firebaseUser.email ?? "",
                     status: "Online",
                     avatar: UIImage(named: "teo")!
                 )
-
+                
                 completion(.success(user))
             }
         }

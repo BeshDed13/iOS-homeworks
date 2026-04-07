@@ -11,6 +11,8 @@
 "tab_favorites" = "Избранное";
 "tab_map" = "Карты";
 
+"sign_up" = "Регистрация аккаунта";
+
 "textField_login" = "Почта";
 "textField_password" = "Пароль";
 
