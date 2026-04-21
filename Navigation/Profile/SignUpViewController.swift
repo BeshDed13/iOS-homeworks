@@ -42,7 +42,7 @@ final class SignUpViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "sign_up".localized
+        label.text = "Регистрация аккаунта"
         label.font = .systemFont(ofSize: 32, weight: .bold)
         label.textAlignment = .center
         return label
@@ -57,7 +57,20 @@ final class SignUpViewController: UIViewController {
         return label
     }()
     
-    private let stackView: UIStackView = {
+    private let emailStackView: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .vertical
+        stack.layer.borderColor = UIColor.lightGray.cgColor
+        stack.layer.borderWidth = 0.5
+        stack.layer.cornerRadius = LayoutConstants.cornerRadius
+        stack.distribution = .fillEqually
+        stack.backgroundColor = .systemGray6
+        stack.clipsToBounds = true
+        return stack
+    }()
+    
+    private let nameStackView: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
@@ -73,7 +86,7 @@ final class SignUpViewController: UIViewController {
     private let secondInfoLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Давайте познакомимся! Все поля обязательны к заполнению"
+        label.text = "Расскажите о себе"
         label.font = .systemFont(ofSize: 16, weight: .regular)
         label.textAlignment = .left
         label.numberOfLines = 0
@@ -105,7 +118,6 @@ final class SignUpViewController: UIViewController {
         name.placeholder = "Имя"
         name.layer.borderWidth = 0.25
         name.layer.borderColor = UIColor.lightGray.cgColor
-        name.layer.cornerRadius = LayoutConstants.cornerRadius
         name.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
         name.leftViewMode = .always
         name.clipsToBounds = true
@@ -119,7 +131,6 @@ final class SignUpViewController: UIViewController {
         name.placeholder = "Фамилия"
         name.layer.borderWidth = 0.25
         name.layer.borderColor = UIColor.lightGray.cgColor
-        name.layer.cornerRadius = LayoutConstants.cornerRadius
         name.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
         name.leftViewMode = .always
         name.clipsToBounds = true
@@ -130,7 +141,7 @@ final class SignUpViewController: UIViewController {
     private let loginField: UITextField = {
         let tf = UITextField()
         tf.translatesAutoresizingMaskIntoConstraints = false
-        tf.placeholder = "textField_login".localized
+        tf.placeholder = "Почта"
         tf.layer.borderWidth = 0.25
         tf.layer.borderColor = UIColor.lightGray.cgColor
         tf.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
@@ -143,7 +154,7 @@ final class SignUpViewController: UIViewController {
     private let passwordField: UITextField = {
         let tf = UITextField()
         tf.translatesAutoresizingMaskIntoConstraints = false
-        tf.placeholder = "textField_password".localized
+        tf.placeholder = "Пароль"
         tf.layer.borderWidth = 0.25
         tf.layer.borderColor = UIColor.lightGray.cgColor
         tf.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
@@ -250,7 +261,7 @@ final class SignUpViewController: UIViewController {
         scrollView.addSubview(contentView)
         
         contentView.addSubview(titleLabel)
-        contentView.addSubview(stackView)
+        contentView.addSubview(emailStackView)
         contentView.addSubview(signUpButton)
         contentView.addSubview(infoLabel)
         contentView.addSubview(secondInfoLabel)
@@ -261,67 +272,65 @@ final class SignUpViewController: UIViewController {
         horizontalStack.addArrangedSubview(avatarImageView)
         horizontalStack.addArrangedSubview(profileStackView)
 
-        profileStackView.addArrangedSubview(nameField)
-        profileStackView.addArrangedSubview(lastnameField)
+        profileStackView.addArrangedSubview(nameStackView)
         profileStackView.addArrangedSubview(birthDateField)
         profileStackView.addArrangedSubview(genderControl)
         
-        stackView.addArrangedSubview(loginField)
-        stackView.addArrangedSubview(passwordField)
+        nameStackView.addArrangedSubview(nameField)
+        nameStackView.addArrangedSubview(lastnameField)
+        
+        emailStackView.addArrangedSubview(loginField)
+        emailStackView.addArrangedSubview(passwordField)
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             
-            // scroll
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
-            // content
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             
-            // title
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 40),
             titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             
-            // info label
-            infoLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 30),
-            infoLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            infoLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            infoLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
+            infoLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
+            infoLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
             
-            // login stack
-            stackView.topAnchor.constraint(equalTo: infoLabel.bottomAnchor, constant: 10),
-            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            stackView.heightAnchor.constraint(equalToConstant: 100),
+
+            emailStackView.topAnchor.constraint(equalTo: infoLabel.bottomAnchor, constant: 10),
+            emailStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            emailStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            emailStackView.heightAnchor.constraint(equalToConstant: 100),
             
-            // second info
-            secondInfoLabel.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 20),
-            secondInfoLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            secondInfoLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            secondInfoLabel.topAnchor.constraint(equalTo: emailStackView.bottomAnchor, constant: 50),
+            secondInfoLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
+            secondInfoLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
             
-            // HStack (avatar + profile)
-            horizontalStack.topAnchor.constraint(equalTo: secondInfoLabel.bottomAnchor, constant: 20),
+            horizontalStack.topAnchor.constraint(equalTo: secondInfoLabel.bottomAnchor, constant: 10),
             horizontalStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             horizontalStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
-            // profile stack height
             profileStackView.heightAnchor.constraint(equalToConstant: 200),
             
-            // button
-            signUpButton.topAnchor.constraint(equalTo: horizontalStack.bottomAnchor, constant: 30),
+            nameStackView.heightAnchor.constraint(equalToConstant: 100),
+            
+            birthDateField.heightAnchor.constraint(equalToConstant: 50),
+            
+            signUpButton.topAnchor.constraint(equalTo: horizontalStack.bottomAnchor, constant: 50),
             signUpButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             signUpButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             signUpButton.heightAnchor.constraint(equalToConstant: 50),
             signUpButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -40),
             
-            agreementLabel.topAnchor.constraint(equalTo: signUpButton.bottomAnchor, constant: 5),
+            agreementLabel.topAnchor.constraint(equalTo: signUpButton.bottomAnchor, constant: 10),
             agreementLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             agreementLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
         ])
@@ -330,20 +339,41 @@ final class SignUpViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func touchSignUpButton() {
+        
         guard let email = loginField.text,
               let password = passwordField.text,
+              let name = nameField.text,
+              let lastName = lastnameField.text,
+              let birthDate = datePicker.date as Date?,
               !email.isEmpty,
-              !password.isEmpty else {
-            showAlert(message: "alert_fill_fields".localized)
+              !password.isEmpty,
+              !name.isEmpty,
+              !lastName.isEmpty else {
+            
+            showAlert(message: "Заполните все поля")
             return
         }
         
-        viewModel.signUp(email: email, password: password) { [weak self] result in
+        let gender = genderControl.selectedSegmentIndex == 0 ? "male" : "female"
+        
+        let avatar = avatarImageView.image
+        
+        viewModel.signUp(
+            email: email,
+            password: password,
+            name: name,
+            lastName: lastName,
+            birthday: birthDate,
+            gender: gender,
+            avatar: avatar
+        ) { [weak self] result in
+            
             DispatchQueue.main.async {
                 switch result {
                 case .success(let user):
                     UserStorage.shared.save(user)
                     self?.coordinator?.didLoginSuccessfully(user: user)
+                    
                 case .failure(let error):
                     let message = self?.viewModel.handleAuthError(error)
                     self?.showAlert(message: message ?? "")
@@ -380,8 +410,8 @@ final class SignUpViewController: UIViewController {
     // MARK: - Alert
     
     private func showAlert(message: String) {
-        let alert = UIAlertController(title: "alert_error".localized, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "alert_ok".localized, style: .default))
+        let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "ОК", style: .default))
         present(alert, animated: true)
     }
 }

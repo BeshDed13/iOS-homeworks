@@ -28,9 +28,6 @@ final class InfoViewController: UIViewController {
         
         createAlertButton()
         setupConstraints()
-        
-        fetchJSON()
-        fetchPlanet()
     }
     
     private func setupConstraints() {
@@ -46,56 +43,6 @@ final class InfoViewController: UIViewController {
             
             
         ])
-    }
-    
-    private func fetchJSON() {
-        guard let url = URL(string: "https://jsonplaceholder.typicode.com/todos/1") else { return }
-        
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            
-            guard let data = data else { return }
-            
-            do {
-                let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
-                
-                if let dictionary = jsonObject as? [String: Any] {
-                    
-                    let object = JSON(
-                        userId: dictionary["userId"] as? Int ?? 0,
-                        id: dictionary["id"] as? Int ?? 0,
-                        title: dictionary["title"] as? String ?? "",
-                        completed: dictionary["completed"] as? Bool ?? false
-                    )
-                    
-                    DispatchQueue.main.async {
-                        self.titleLabel.text = object.title
-                    }
-                }
-            } catch {
-                print("JSON error:", error)
-            }
-        }
-        task.resume()
-    }
-    
-    private func fetchPlanet() {
-        guard let url = URL(string: "https://swapi.dev/api/planets/1") else { return }
-        
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            
-            guard let data = data else { return }
-            
-            do {
-                let planet = try JSONDecoder().decode(Planet.self, from: data)
-                
-                DispatchQueue.main.async {
-                    self.planetLabel.text = "Orbital period: \(planet.orbitalPeriod)"
-                }
-            } catch {
-                print("Decoding error:", error)
-            }
-        }
-        task.resume()
     }
     
     private func createAlertButton() {

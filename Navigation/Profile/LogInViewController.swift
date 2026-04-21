@@ -57,7 +57,7 @@ final class LoginViewController: UIViewController {
             button.setBackgroundImage(pixel.image(alpha: 0.4), for: .disabled)
         }
         
-        button.setTitle("button_login".localized, for: .normal)
+        button.setTitle("Войти", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(touchLoginButton), for: .touchUpInside)
         button.layer.cornerRadius = LayoutConstants.cornerRadius
@@ -69,7 +69,7 @@ final class LoginViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .systemGreen
-        button.setTitle("button_signup".localized, for: .normal)
+        button.setTitle("Зарегистрироваться", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(touchSignUpButton), for: .touchUpInside)
         button.layer.cornerRadius = LayoutConstants.cornerRadius
@@ -80,7 +80,7 @@ final class LoginViewController: UIViewController {
     var loginField: UITextField = {
         let login = UITextField()
         login.translatesAutoresizingMaskIntoConstraints = false
-        login.placeholder = "textField_login".localized
+        login.placeholder = "Почта"
         login.layer.borderColor = UIColor.lightGray.cgColor
         login.layer.borderWidth = 0.25
         login.leftViewMode = .always
@@ -96,7 +96,7 @@ final class LoginViewController: UIViewController {
         let password = UITextField()
         password.translatesAutoresizingMaskIntoConstraints = false
         password.leftViewMode = .always
-        password.placeholder = "textField_password".localized
+        password.placeholder = "Пароль"
         password.layer.borderColor = UIColor.lightGray.cgColor
         password.layer.borderWidth = 0.25
         password.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: password.frame.height))
@@ -107,6 +107,20 @@ final class LoginViewController: UIViewController {
         return password
     }()
     
+    private let rememberMeSwitch: UISwitch = {
+        let switchControl = UISwitch()
+        switchControl.translatesAutoresizingMaskIntoConstraints = false
+        return switchControl
+    }()
+    
+    private let rememberMeLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Запомнить меня"
+        label.font = UIFont.systemFont(ofSize: 16)
+        return label
+    }()
+    
     // MARK: - Setup section
     
     override func viewDidLoad() {
@@ -115,6 +129,14 @@ final class LoginViewController: UIViewController {
         view.backgroundColor = UIColor(named: "FirstColor")
         navigationController?.navigationBar.isHidden = true
         
+        let isRemembered = UserDefaults.standard.bool(forKey: "remember_me")
+
+        if isRemembered {
+            loginField.text = KeychainService.get(key: "user_email")
+            passwordField.text = KeychainService.get(key: "user_password")
+            rememberMeSwitch.isOn = true
+        }
+        
         setupViews()
     }
     
@@ -122,7 +144,7 @@ final class LoginViewController: UIViewController {
         view.addSubview(loginScrollView)
         loginScrollView.addSubview(contentView)
         
-        contentView.addSubviews(vkLogo, loginStackView, loginButton, signupButton)
+        contentView.addSubviews(vkLogo, loginStackView, loginButton, signupButton, rememberMeLabel, rememberMeSwitch)
         
         loginStackView.addArrangedSubview(loginField)
         loginStackView.addArrangedSubview(passwordField)
@@ -158,7 +180,13 @@ final class LoginViewController: UIViewController {
             loginStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
             loginStackView.heightAnchor.constraint(equalToConstant: 100),
             
-            loginButton.topAnchor.constraint(equalTo: loginStackView.bottomAnchor, constant: LayoutConstants.indent),
+            rememberMeSwitch.topAnchor.constraint(equalTo: loginStackView.bottomAnchor, constant: 20),
+            rememberMeSwitch.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstants.leadingMargin),
+            
+            rememberMeLabel.centerYAnchor.constraint(equalTo: rememberMeSwitch.centerYAnchor),
+            rememberMeLabel.leadingAnchor.constraint(equalTo: rememberMeSwitch.trailingAnchor, constant: 10),
+            
+            loginButton.topAnchor.constraint(equalTo: rememberMeSwitch.bottomAnchor, constant: LayoutConstants.indent),
             loginButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstants.leadingMargin),
             loginButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
             loginButton.heightAnchor.constraint(equalToConstant: 50),
@@ -196,7 +224,7 @@ final class LoginViewController: UIViewController {
               !login.isEmpty,
               !password.isEmpty else {
             
-            showAlert(message: "alert_fill_fields".localized)
+            showAlert(message: "Пожалуйста, заполните оба поля")
             return
         }
         
@@ -207,6 +235,17 @@ final class LoginViewController: UIViewController {
                 case .success(let user):
                     UserStorage.shared.save(user)
                     self?.coordinator?.didLoginSuccessfully(user: user)
+                    
+                    if self?.rememberMeSwitch.isOn == true {
+                        KeychainService.save(key: "user_email", value: login)
+                        KeychainService.save(key: "user_password", value: password)
+                        UserDefaults.standard.set(true, forKey: "remember_me")
+                    } else {
+                        KeychainService.delete(key: "user_email")
+                        KeychainService.delete(key: "user_password")
+                        UserDefaults.standard.set(false, forKey: "remember_me")
+                    }
+                    
                 case .failure(let error):
                     let message = self?.viewModel.handleAuthError(error)
                     self?.showAlert(message: message ?? "")
@@ -226,9 +265,9 @@ final class LoginViewController: UIViewController {
         if let errorCode = AuthErrorCode(rawValue: nsError.code) {
             switch errorCode {
             case .wrongPassword:
-                showAlert(message: "alert_wrong_password".localized)
+                showAlert(message: "Неверный логин или пароль")
             case .userNotFound:
-                showAlert(message: "alert_user_not_found".localized)
+                showAlert(message: "Пользователь не найден")
             default:
                 showAlert(message: error.localizedDescription)
             }
@@ -250,9 +289,9 @@ final class LoginViewController: UIViewController {
     
     private func showAlert(message: String) {
         
-        let alert = UIAlertController(title: "alert_error".localized, message: message, preferredStyle: .alert)
+        let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
         
-        alert.addAction(UIAlertAction(title: "alert_ok".localized, style: .default))
+        alert.addAction(UIAlertAction(title: "ОК", style: .default))
         present(alert, animated: true)
     }
 }

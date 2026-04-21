@@ -30,7 +30,7 @@ final class LogInViewModelTests: XCTestCase {
         )
         let message = viewModel.handleAuthError(error)
         
-        XCTAssertEqual(message, "alert_user_not_found".localized)
+        XCTAssertEqual(message, "Пользователь не найден")
     }
     
     func testWrongPasswordError() {
@@ -40,7 +40,7 @@ final class LogInViewModelTests: XCTestCase {
         )
         let message = viewModel.handleAuthError(error)
         
-        XCTAssertEqual(message, "alert_wrong_password".localized)
+        XCTAssertEqual(message, "Неверный логин или пароль")
     }
     
     func testUnknownError() {

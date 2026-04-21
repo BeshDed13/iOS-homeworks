@@ -27,7 +27,7 @@ final class LogInViewModel {
                 let user = User(
                     login: firebaseUser.email ?? "",
                     fullName: firebaseUser.email ?? "",
-                    status: "Online",
+                    status: "Онлайн",
                     avatar: UIImage(named: "teo")!
                 )
 
@@ -43,9 +43,9 @@ final class LogInViewModel {
         if let errorCode = AuthErrorCode(rawValue: nsError.code) {
             switch errorCode {
             case .wrongPassword:
-                return "alert_wrong_password".localized
+                return "Неверный логин или пароль"
             case .userNotFound:
-                return "alert_user_not_found".localized
+                return "Пользователь не найден"
             default:
                 return error.localizedDescription
             }

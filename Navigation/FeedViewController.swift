@@ -9,106 +9,61 @@ final class FeedViewController: UIViewController {
     
     weak var coordinator: FeedCoordinator?
     
-    private let viewModel = FeedViewModel()
+    private let favoritesService = FavoritesService()
     
-    private let textField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "enter_word_textField".localized
-        textField.borderStyle = .roundedRect
-        return textField
-    }()
-    
-    private lazy var checkGuessButton = CustomButton(
-        title: "feed_check_text".localized,
-        backgroundColor: UIColor(named: "SecondColor")!
-    ) { [weak self] in
-        self?.checkWord()
-    }
-    
-    private let resultLabel: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.font = .systemFont(ofSize: 24, weight: .bold)
-        return label
+    private let tableView: UITableView = {
+        let table = UITableView()
+        table.translatesAutoresizingMaskIntoConstraints = false
+        table.register(PostTableViewCell.self, forCellReuseIdentifier: "post")
+        return table
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = UIColor(named: "FirstColor")
-        createSubView()
-        bindViewModel()
-    }
-    
-    private func createSubView() {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .vertical
-        stackView.spacing = 10
-        stackView.distribution = .fillEqually
         
-        view.addSubview(stackView)
+        navigationItem.title = "Лента"
+        
+        view.addSubview(tableView)
+        
+        tableView.dataSource = self
+        tableView.delegate = self
         
         NSLayoutConstraint.activate([
-            stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            stackView.heightAnchor.constraint(equalToConstant: 200),
-            stackView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, constant: -32)
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
-        
-        addPostButton(
-            title: "post_number_one_title".localized,
-            color: .systemPurple,
-            to: stackView
-        ) { [weak self] in
-            self?.openPost(at: 0)
-        }
-        
-        addPostButton(
-            title: "post_number_two_title".localized,
-            color: .systemIndigo,
-            to: stackView
-        ) { [weak self] in
-            self?.openPost(at: 1)
-        }
-        
-        stackView.addArrangedSubview(textField)
-        stackView.addArrangedSubview(checkGuessButton)
-        stackView.addArrangedSubview(resultLabel)
+    }
+}
+
+extension FeedViewController: UITableViewDataSource, UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        postExamples.count
     }
     
-    private func addPostButton(
-        title: String,
-        color: UIColor,
-        to stackView: UIStackView,
-        action: @escaping () -> Void
-    ) {
-        let button = CustomButton(
-            title: title,
-            backgroundColor: color,
-            action: action
-        )
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
+        let cell = tableView.dequeueReusableCell(withIdentifier: "post", for: indexPath) as! PostTableViewCell
         
-        stackView.addArrangedSubview(button)
-    }
-    
-    private func openPost(at index: Int) {
-        let post = postExamples[index]
+        cell.configPostArray(post: postExamples[indexPath.row])
         
-        let postVC = PostViewController()
-        postVC.post = post
-        coordinator?.openPost(post)
-    }
-    
-    private func bindViewModel() {
-        viewModel.onResult = { [weak self] isCorrect in
-            self?.resultLabel.text = isCorrect ? "result_label_one".localized : "result_label_two".localized
-            self?.resultLabel.textColor = isCorrect ? .green : .red
+        cell.onLike = { [weak self] in
+            guard let self = self else { return }
             
+            postExamples[indexPath.row].likes += 1
+            
+            do {
+                try self.favoritesService.save(post: postExamples[indexPath.row])
+                tableView.reloadRows(at: [indexPath], with: .automatic)
+            } catch {
+                print("Failed to save post: \(error)")
+            }
         }
-    }
-    
-    private func checkWord() {
-        viewModel.checkWord(textField.text)
+        
+        return cell
     }
 }

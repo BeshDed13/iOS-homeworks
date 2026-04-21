@@ -7,12 +7,19 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseFirestore
+import FirebaseStorage
 
 final class SignUpViewModel {
     
     func signUp(
         email: String,
         password: String,
+        name: String,
+        lastName: String,
+        birthday: Date,
+        gender: String,
+        avatar: UIImage?,
         completion: @escaping (Result<User, Error>) -> Void) {
             
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
@@ -22,17 +29,94 @@ final class SignUpViewModel {
                 return
             }
             
-            if let firebaseUser = result?.user {
+            guard let uid = result?.user.uid else { return }
+            
+            self.uploadAvatar(uid: uid, image: avatar) { avatarURL in
                 
-                let user = User(
-                    login: firebaseUser.email ?? "",
-                    fullName: firebaseUser.email ?? "",
-                    status: "Online",
-                    avatar: UIImage(named: "teo")!
-                )
-                
-                completion(.success(user))
+                self.saveUserToFirestore(
+                    uid: uid,
+                    email: email,
+                    password: password,
+                    name: name,
+                    lastName: lastName,
+                    birthday: birthday,
+                    gender: gender,
+                    avatarURL: avatarURL
+                ) { result in
+                    completion(result)
+                }
             }
+        }
+    }
+    
+    private func uploadAvatar(
+        uid: String,
+        image: UIImage?,
+        completion: @escaping (String?) -> Void
+    ) {
+        
+        guard let image = image,
+              let data = image.jpegData(compressionQuality: 0.4) else {
+            completion(nil)
+            return
+        }
+        
+        let ref = Storage.storage().reference().child("avatars/\(uid).jpg")
+        ref.putData(data, metadata: nil) { _, error in
+            
+            if error != nil {
+                completion(nil)
+                return
+            }
+            
+            ref.downloadURL { url, _ in
+                completion(url?.absoluteString)
+            }
+        }
+    }
+    
+    private func saveUserToFirestore(
+        uid: String,
+        email: String,
+        password: String,
+        name: String,
+        lastName: String,
+        birthday: Date,
+        gender: String,
+        avatarURL: String?,
+        completion: @escaping (Result<User, Error>) -> Void
+    ) {
+        
+        let db = Firestore.firestore()
+        
+        let data: [String: Any] = [
+            "uid": uid,
+            "email": email,
+            "password": password,
+            "name": name,
+            "lastName": lastName,
+            "birthday": Timestamp(date: birthday),
+            "gender": gender,
+            "avatarURL": avatarURL ?? "",
+            "status": "Online"
+        ]
+        
+        db.collection("users").document(uid).setData(data) { error in
+            
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            let user = User(
+                login: email,
+                fullName: "\(name) \(lastName)",
+                status: "Online",
+                avatar: UIImage(named: "teo")!
+            )
+            
+            completion(.success(user))
+            
         }
     }
     
@@ -43,9 +127,9 @@ final class SignUpViewModel {
         if let errorCode = AuthErrorCode(rawValue: nsError.code) {
             switch errorCode {
             case .wrongPassword:
-                return "alert_wrong_password".localized
+                return "Неверный логин или пароль"
             case .userNotFound:
-                return "alert_user_not_found".localized
+                return "Пользователь не найден"
             default:
                 return error.localizedDescription
             }

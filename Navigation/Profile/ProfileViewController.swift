@@ -7,26 +7,24 @@ import UIKit
 
 final class ProfileViewController: UIViewController {
     
-    weak var coordinator : ProfileCoordinator?
+    weak var coordinator: ProfileCoordinator?
     
     static let headerIdent = "header"
     static let photoIdent = "photo"
-    static let postIdent = "post"
     
-    private let favoritesService = FavoritesService()
+    private let viewModel = ProfileViewModel()
     
-    var user: User!
+    private var user: User?
     
-    static var postTableView: UITableView = {
+    private let tableView: UITableView = {
         let table = UITableView(frame: .zero, style: .grouped)
         table.translatesAutoresizingMaskIntoConstraints = false
         table.register(ProfileHeaderView.self, forHeaderFooterViewReuseIdentifier: headerIdent)
         table.register(PhotosTableViewCell.self, forCellReuseIdentifier: photoIdent)
-        table.register(PostTableViewCell.self, forCellReuseIdentifier: postIdent)
         return table
     }()
     
-    // MARK: - Setup section
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,104 +35,106 @@ final class ProfileViewController: UIViewController {
         view.backgroundColor = .systemBackground
         #endif
         
-        view.addSubview(Self.postTableView)
         view.backgroundColor = UIColor(named: "FirstColor")
-        setupConstraints()
         
-        Self.postTableView.dataSource = self
-        Self.postTableView.delegate = self
-        Self.postTableView.refreshControl = UIRefreshControl()
-        Self.postTableView.refreshControl?.addTarget(self, action: #selector(reloadTableView), for: .valueChanged)
+        navigationItem.title = "Профиль"
+        
+        setupViews()
+        setupConstraints()
+        setupTableView()
+        fetchUser()
+    }
+    
+    // MARK: - Setup
+    
+    private func setupViews() {
+        view.addSubview(tableView)
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            Self.postTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            Self.postTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            Self.postTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            Self.postTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
-
-    @objc func reloadTableView() {
-        Self.postTableView.reloadData()
-        Self.postTableView.refreshControl?.endRefreshing()
+    
+    private func setupTableView() {
+        tableView.dataSource = self
+        tableView.delegate = self
+        
+        tableView.refreshControl = UIRefreshControl()
+        tableView.refreshControl?.addTarget(self, action: #selector(reloadTableView), for: .valueChanged)
     }
-}
-
-// MARK: - Extensions
-
-extension ProfileViewController: UITableViewDataSource {
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch section {
-        case 0: return 1
-        case 1: return postExamples.count
-        default:
-            assertionFailure("no registered section")
-            return 1
+    
+    private func fetchUser() {
+        viewModel.fetchCurrentUser { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let user):
+                    self?.user = user
+                    self?.tableView.reloadData()
+                case .failure(let error):
+                    print("Failed to fetch user: \(error)")
+                }
+            }
         }
     }
-
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+    
+    // MARK: - Actions
+    
+    @objc private func reloadTableView() {
+        fetchUser()
+        tableView.refreshControl?.endRefreshing()
     }
 }
+
+// MARK: - UITableViewDataSource
+
+extension ProfileViewController: UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1 // только PhotosTableViewCell
+    }
+}
+
+// MARK: - UITableViewDelegate
 
 extension ProfileViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch indexPath.section {
-        case 0:
-            let cell = Self.postTableView.dequeueReusableCell(withIdentifier: Self.photoIdent, for: indexPath) as! PhotosTableViewCell
-            return cell
-        case 1:
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: Self.postIdent,
-                for: indexPath
-            ) as! PostTableViewCell
-            cell.configPostArray(post: postExamples[indexPath.row])
-            cell.onLike = { [weak self] in
-                guard let self = self else { return }
-                postExamples[indexPath.row].likes += 1
-                do {
-                    try self.favoritesService.save(post: postExamples[indexPath.row])
-                    tableView.reloadRows(at: [indexPath], with: .automatic)
-                } catch {
-                    print("Failed to save post to favorites: \(error)")
-                }
-            }
-            
-            return cell
-        default:
-            assertionFailure("no registered section")
-            return UITableViewCell()
-        }
+
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: Self.photoIdent,
+            for: indexPath
+        ) as! PhotosTableViewCell
+        
+        return cell
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard section == 0 else { return nil }
-        let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Self.headerIdent) as! ProfileHeaderView
+        let headerView = tableView.dequeueReusableHeaderFooterView(
+            withIdentifier: Self.headerIdent
+        ) as! ProfileHeaderView
+        
+        if let user = user {
+            headerView.configure(with: user)
+        }
+        
         return headerView
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return section == 0 ? 220 : 0
+        return 220
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch indexPath.section {
-        case 0:
-            tableView.deselectRow(at: indexPath, animated: false)
-            navigationController?.pushViewController(PhotosViewController(), animated: true)
-        case 1:
-            guard let cell = tableView.cellForRow(at: indexPath) else { return }
-            if let post = cell as? PostTableViewCell {
-                post.incrementPostViewsCounter()
-            }
-        default:
-            assertionFailure("no registered section")
-        }
+        tableView.deselectRow(at: indexPath, animated: true)
+        navigationController?.pushViewController(PhotosViewController(), animated: true)
     }
 }
-

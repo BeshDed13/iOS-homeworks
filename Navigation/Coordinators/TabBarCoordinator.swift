@@ -23,36 +23,43 @@ final class TabBarCoordinator: AppCoordinator {
         let profileNavigationController = UINavigationController()
         let favoritesNavigationController = UINavigationController()
         let mapNavigationController = UINavigationController()
+        let chatsNavigationController = UINavigationController()
         
         let feedCoordinator = FeedCoordinator(navigationController: feedNavigationController)
         let profileCoordinator = ProfileCoordinator(navigationController: profileNavigationController)
         let favoritesCoordinator = FavoritesCoordinator(navigationController: favoritesNavigationController)
         let mapCoordinator = MapCoordinator(navigationController: mapNavigationController)
+        let chatsCoordinator = ChatsCoordinator(navigationController: chatsNavigationController)
         
-        childCoordinators = [profileCoordinator, feedCoordinator, favoritesCoordinator, mapCoordinator]
+        childCoordinators = [profileCoordinator, feedCoordinator, chatsCoordinator, favoritesCoordinator, mapCoordinator]
         
         feedCoordinator.start()
         profileCoordinator.start()
         favoritesCoordinator.start()
         mapCoordinator.start()
+        chatsCoordinator.start()
         
-        profileNavigationController.tabBarItem = UITabBarItem(title: "tab_profile".localized,
+        profileNavigationController.tabBarItem = UITabBarItem(title: "Профиль",
                                             image: UIImage(systemName: "person.crop.circle"),
                                             selectedImage: UIImage(systemName: "person.crop.circle.fill"))
     
-        feedNavigationController.tabBarItem = UITabBarItem(title: "tab_feed".localized,
+        feedNavigationController.tabBarItem = UITabBarItem(title: "Лента",
                                          image: UIImage(systemName: "text.bubble"),
                                          selectedImage: UIImage(systemName: "text.bubble.fill"))
         
-        favoritesNavigationController.tabBarItem = UITabBarItem(title: "tab_favorites".localized,
+        favoritesNavigationController.tabBarItem = UITabBarItem(title: "Избранное",
                                             image: UIImage(systemName: "star"),
                                             selectedImage: UIImage(systemName: "star.fill"))
-        mapNavigationController.tabBarItem = UITabBarItem(title: "tab_map".localized,
+        
+        mapNavigationController.tabBarItem = UITabBarItem(title: "Карты",
                                                           image: UIImage(systemName: "map"),
                                                           selectedImage: UIImage(systemName: "map.fill"))
-                                                          
         
-        tabBarController.viewControllers = [profileNavigationController, feedNavigationController, favoritesNavigationController, mapNavigationController]
+        chatsNavigationController.tabBarItem = UITabBarItem(title: "Чаты",
+                                                            image: UIImage(systemName: "bubble.left"),
+                                                            selectedImage: UIImage(systemName: "bubble.left.fill"))
+                                                          
+        tabBarController.viewControllers = [profileNavigationController, feedNavigationController, chatsNavigationController, favoritesNavigationController, mapNavigationController]
         
         navigationController.setViewControllers([tabBarController], animated: true)
 
