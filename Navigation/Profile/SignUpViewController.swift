@@ -13,6 +13,8 @@ final class SignUpViewController: UIViewController {
     weak var coordinator: LoginCoordinator?
     let viewModel: SignUpViewModel
     
+    private var selectedAvatar: Avatar = .avatar1
+    
     // MARK: - Init
     
     init(coordinator: LoginCoordinator?, viewModel: SignUpViewModel) {
@@ -356,7 +358,7 @@ final class SignUpViewController: UIViewController {
         
         let gender = genderControl.selectedSegmentIndex == 0 ? "male" : "female"
         
-        let avatar = avatarImageView.image
+        let avatar = selectedAvatar
         
         viewModel.signUp(
             email: email,
@@ -365,7 +367,7 @@ final class SignUpViewController: UIViewController {
             lastName: lastName,
             birthday: birthDate,
             gender: gender,
-            avatar: avatar
+            avatar: selectedAvatar
         ) { [weak self] result in
             
             DispatchQueue.main.async {
@@ -383,10 +385,12 @@ final class SignUpViewController: UIViewController {
     }
     
     @objc private func selectAvatar() {
-        let picker = UIImagePickerController()
-        picker.sourceType = .photoLibrary
-        picker.delegate = self
-        present(picker, animated: true)
+        let vc = AvatarSelectionViewController { [weak self] avatar in
+            self?.selectedAvatar = avatar
+            self?.avatarImageView.image = avatar.image
+        }
+        
+        present(vc, animated: true)
     }
     
     @objc private func dateChanged() {
@@ -416,14 +420,4 @@ final class SignUpViewController: UIViewController {
     }
 }
 
-extension SignUpViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController,
-                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
-        if let image = info[.originalImage] as? UIImage {
-            avatarImageView.image = image
-        }
-        
-        picker.dismiss(animated: true)
-    }
-}
+

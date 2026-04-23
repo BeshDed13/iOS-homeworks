@@ -36,13 +36,12 @@ final class Checker: CheckerServiceProtocol {
                 return
             }
             
-            if let firebaseUser = Auth.auth().currentUser,
-               let avatar = UIImage(named: "teo") {
+            if let firebaseUser = Auth.auth().currentUser {
                 let user = User(
                     login: firebaseUser.email ?? "",
                     fullName: firebaseUser.email ?? "",
                     status: "Online",
-                    avatar: avatar
+                    avatarId: "avatar1"
                 )
                 completion(.success(user))
             } else {
@@ -62,13 +61,12 @@ final class Checker: CheckerServiceProtocol {
                 return
             }
             
-            if let firebaseUser = Auth.auth().currentUser,
-               let avatar = UIImage(named: "teo") {
+            if let firebaseUser = Auth.auth().currentUser {
                 let user = User(
                     login: firebaseUser.email ?? "",
                     fullName: firebaseUser.email ?? "",
                     status: "Online",
-                    avatar: avatar
+                    avatarId: "avatar1"
                 )
                 completion(.success(user))
             } else {

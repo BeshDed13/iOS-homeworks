@@ -11,13 +11,13 @@ final class User {
     let login: String
     let fullName: String
     let status: String
-    let avatar: UIImage
+    let avatarId: String
     
-    init(login: String, fullName: String, status: String, avatar: UIImage) {
+    init(login: String, fullName: String, status: String, avatarId: String) {
         self.login = login
         self.fullName = fullName
         self.status = status
-        self.avatar = avatar
+        self.avatarId = avatarId
     }
 }
 
@@ -47,7 +47,7 @@ final class CurrentUserService: UserService {
 final class TestUserService: UserService {
     var user: User
     
-    private let testUser = User(login: "test", fullName: "testName", status: "dbgmode", avatar: UIImage(named:"teo")!)
+    private let testUser = User(login: "test", fullName: "testName", status: "dbgmode", avatarId: "avatar1")
     
     init(user: User) {
         self.user = user

@@ -8,7 +8,6 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
-import FirebaseStorage
 
 final class SignUpViewModel {
     
@@ -19,9 +18,10 @@ final class SignUpViewModel {
         lastName: String,
         birthday: Date,
         gender: String,
-        avatar: UIImage?,
-        completion: @escaping (Result<User, Error>) -> Void) {
-            
+        avatar: Avatar,
+        completion: @escaping (Result<User, Error>) -> Void
+    ) {
+        
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             
             if let error = error {
@@ -31,59 +31,27 @@ final class SignUpViewModel {
             
             guard let uid = result?.user.uid else { return }
             
-            self.uploadAvatar(uid: uid, image: avatar) { avatarURL in
-                
-                self.saveUserToFirestore(
-                    uid: uid,
-                    email: email,
-                    password: password,
-                    name: name,
-                    lastName: lastName,
-                    birthday: birthday,
-                    gender: gender,
-                    avatarURL: avatarURL
-                ) { result in
-                    completion(result)
-                }
-            }
-        }
-    }
-    
-    private func uploadAvatar(
-        uid: String,
-        image: UIImage?,
-        completion: @escaping (String?) -> Void
-    ) {
-        
-        guard let image = image,
-              let data = image.jpegData(compressionQuality: 0.4) else {
-            completion(nil)
-            return
-        }
-        
-        let ref = Storage.storage().reference().child("avatars/\(uid).jpg")
-        ref.putData(data, metadata: nil) { _, error in
-            
-            if error != nil {
-                completion(nil)
-                return
-            }
-            
-            ref.downloadURL { url, _ in
-                completion(url?.absoluteString)
-            }
+            self.saveUserToFirestore(
+                uid: uid,
+                email: email,
+                name: name,
+                lastName: lastName,
+                birthday: birthday,
+                gender: gender,
+                avatarId: avatar.rawValue,
+                completion: completion
+            )
         }
     }
     
     private func saveUserToFirestore(
         uid: String,
         email: String,
-        password: String,
         name: String,
         lastName: String,
         birthday: Date,
         gender: String,
-        avatarURL: String?,
+        avatarId: String,
         completion: @escaping (Result<User, Error>) -> Void
     ) {
         
@@ -92,12 +60,11 @@ final class SignUpViewModel {
         let data: [String: Any] = [
             "uid": uid,
             "email": email,
-            "password": password,
             "name": name,
             "lastName": lastName,
             "birthday": Timestamp(date: birthday),
             "gender": gender,
-            "avatarURL": avatarURL ?? "",
+            "avatarId": avatarId,
             "status": "Online"
         ]
         
@@ -112,11 +79,10 @@ final class SignUpViewModel {
                 login: email,
                 fullName: "\(name) \(lastName)",
                 status: "Online",
-                avatar: UIImage(named: "teo")!
+                avatarId: avatarId
             )
             
             completion(.success(user))
-            
         }
     }
     

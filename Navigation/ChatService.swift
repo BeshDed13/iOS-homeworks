@@ -17,13 +17,22 @@ final class ChatService {
             .whereField("participants", arrayContains: userId)
             .addSnapshotListener { snapshot, _ in
                 guard let documents = snapshot?.documents else { return }
-                let chats = documents.map { doc -> Chat in
+                let chats = documents.compactMap { doc -> Chat? in
                     let data = doc.data()
+                    
+                    guard
+                        let participants = data["participants"] as? [String],
+                        let lastMessage = data["lastMessage"] as? String,
+                        let timestamp = data["lastMessageDate"] as? Timestamp,
+                        let lastSenderId = data["lastSenderId"] as? String
+                    else { return nil }
                     
                     return Chat(
                         id: doc.documentID,
-                        participants: data["participants"] as? [String] ?? [],
-                        lastMessage: data["lastMessage"] as? String ?? ""
+                        participants: participants,
+                        lastMessage: lastMessage,
+                        lastMessageDate: timestamp.dateValue(),
+                        lastSenderId: lastSenderId
                     )
                 }
                 
@@ -33,19 +42,36 @@ final class ChatService {
     
     func findExistingChat(userIds: [String], completion: @escaping (Chat?) -> Void) {
 
-        let sorted = userIds.sorted()
+        let key = userIds.sorted().joined(separator: "_")
 
         db.collection("chats")
-            .whereField("participants", isEqualTo: sorted)
+            .whereField("participantsKey", isEqualTo: key)
             .getDocuments { snapshot, _ in
 
-                let chat = snapshot?.documents.first.map { doc in
-                    Chat(
-                        id: doc.documentID,
-                        participants: doc["participants"] as? [String] ?? [],
-                        lastMessage: doc["lastMessage"] as? String ?? ""
-                    )
+                guard let doc = snapshot?.documents.first else {
+                    completion(nil)
+                    return
                 }
+
+                let data = doc.data()
+
+                guard
+                    let participants = data["participants"] as? [String],
+                    let lastMessage = data["lastMessage"] as? String,
+                    let timestamp = data["lastMessageDate"] as? Timestamp,
+                    let lastSenderId = data["lastSenderId"] as? String
+                else {
+                    completion(nil)
+                    return
+                }
+
+                let chat = Chat(
+                    id: doc.documentID,
+                    participants: participants,
+                    lastMessage: lastMessage,
+                    lastMessageDate: timestamp.dateValue(),
+                    lastSenderId: lastSenderId
+                )
 
                 completion(chat)
             }
@@ -67,7 +93,8 @@ final class ChatService {
             chatRef?.setData([
                 "participants": users,
                 "lastMessage": "",
-                "updatedAt": Timestamp()
+                "lastMessageDate": Timestamp(),
+                "lastSenderId": ""
             ])
 
             completion(chatRef!.documentID)
@@ -84,13 +111,20 @@ final class ChatService {
                 
                 guard let documents = snapshot?.documents else { return }
                 
-                let messages = documents.map { doc -> Message in
+                let messages = documents.compactMap { doc -> Message? in
                     let data = doc.data()
+                    
+                    guard
+                        let text = data["text"] as? String,
+                        let senderId = data["senderId"] as? String,
+                        let timestamp = data["createdAt"] as? Timestamp
+                    else { return nil }
                     
                     return Message(
                         id: doc.documentID,
-                        text: data["text"] as? String ?? "",
-                        senderId: data["senderId"] as? String ?? ""
+                        text: text,
+                        senderId: senderId,
+                        createdAt: timestamp.dateValue()
                     )
                 }
                 
@@ -100,6 +134,8 @@ final class ChatService {
     
     func sendMessage(chatId: String, text: String, senderId: String) {
         
+        let timestamp = Timestamp()
+        
         let messageRef = db.collection("chats")
             .document(chatId)
             .collection("messages")
@@ -108,14 +144,15 @@ final class ChatService {
         messageRef.setData([
             "text": text,
             "senderId": senderId,
-            "createdAt": Timestamp()
+            "createdAt": timestamp
         ])
         
         db.collection("chats")
             .document(chatId)
             .updateData([
                 "lastMessage": text,
-                "updatedAt": Timestamp()
+                "lastMessageDate": timestamp,
+                "lastSenderId": senderId
             ])
     }
 }

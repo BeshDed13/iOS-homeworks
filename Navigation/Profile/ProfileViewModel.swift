@@ -31,12 +31,13 @@ final class ProfileViewModel {
             let name = data["name"] as? String ?? ""
             let lastName = data["lastName"] as? String ?? ""
             let status = data["status"] as? String ?? ""
+            let avatarId = data["avatarId"] as? String ?? ""
             
             let user = User(
                 login: data["email"] as? String ?? "",
                 fullName: "\(name) \(lastName)",
                 status: status,
-                avatar: UIImage(named: "teo")!
+                avatarId: avatarId
             )
             
             completion(.success(user))

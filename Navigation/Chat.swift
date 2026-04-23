@@ -11,4 +11,6 @@ struct Chat {
     let id: String
     let participants: [String]
     let lastMessage: String
+    let lastMessageDate: Date
+    let lastSenderId: String
 }
