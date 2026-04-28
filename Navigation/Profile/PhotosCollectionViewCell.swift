@@ -5,9 +5,9 @@
 
 import UIKit
 
-class PhotosCollectionViewCell: UICollectionViewCell {
+final class PhotosCollectionViewCell: UICollectionViewCell {
 
-    var photo: UIImageView = {
+    private let photo: UIImageView = {
         let photos = UIImageView()
         photos.translatesAutoresizingMaskIntoConstraints = false
         return photos

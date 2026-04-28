@@ -4,6 +4,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 final class ProfileViewController: UIViewController {
     
@@ -28,16 +29,16 @@ final class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        #if DEBUG
-        view.backgroundColor = .systemRed
-        #else
-        view.backgroundColor = .systemBackground
-        #endif
-        
+    
         view.backgroundColor = UIColor(named: "FirstColor")
         
         navigationItem.title = "Профиль"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: "Выйти",
+            style: .plain,
+            target: self,
+            action: #selector(didTapLogout)
+        )
         
         setupViews()
         setupConstraints()
@@ -82,11 +83,41 @@ final class ProfileViewController: UIViewController {
         }
     }
     
+    private func showLogoutAlert() {
+        let alert = UIAlertController(
+            title: "Выход",
+            message: "Вы уверены, что хотите выйти?",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
+        
+        alert.addAction(UIAlertAction(title: "Выйти", style: .destructive, handler: { [weak self] _ in
+            self?.logout()
+        }))
+        
+        present(alert, animated: true)
+    }
+    
+    private func logout() {
+        do {
+            try Auth.auth().signOut()
+            print("logout success")
+            coordinator?.didLogout()
+        } catch {
+            print("Logout error:", error)
+        }
+    }
+    
     // MARK: - Actions
     
     @objc private func reloadTableView() {
         fetchUser()
         tableView.refreshControl?.endRefreshing()
+    }
+    
+    @objc private func didTapLogout() {
+        showLogoutAlert()
     }
 }
 

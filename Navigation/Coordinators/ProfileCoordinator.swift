@@ -12,12 +12,19 @@ final class ProfileCoordinator: AppCoordinator {
     var navigationController: UINavigationController
     var childCoordinators: [AppCoordinator] = []
     
+    var onLogout: (() -> Void)?
+    
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
     
     func start() {
         let vc = ProfileViewController()
+        vc.coordinator = self
         navigationController.pushViewController(vc, animated: true)
+    }
+    
+    func didLogout() {
+        onLogout?()
     }
 }

@@ -89,11 +89,9 @@ extension AvatarSelectionViewController: UICollectionViewDataSource, UICollectio
         
         let avatar = avatars[indexPath.item]
         
-        // визуальный выбор
         selectedIndexPath = indexPath
         collectionView.reloadData()
         
-        // отдаём наружу
         completion(avatar)
         
         dismiss(animated: true)

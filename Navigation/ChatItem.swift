@@ -10,7 +10,7 @@ import Foundation
 struct ChatItem {
     let id: String
     let name: String
-    let avatarID: String
+    let avatarId: String
     let lastMessage: String
     let date: Date
     let isOnline: Bool

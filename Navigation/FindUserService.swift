@@ -60,11 +60,28 @@ final class FindUserService {
                     
                     let fullName = "\(firstName) \(lastName)"
                     
+                    guard fullName.lowercased().contains(lowercasedQuery) else {
+                        return nil
+                    }
+                    
+                    guard let avatarRaw = data["avatarId"] as? String,
+                        let avatar = Avatar(rawValue: avatarRaw) else {
+                        return nil
+                    }
+                    
+                    guard let timestamp = data["birthday"] as? Timestamp else {
+                        return nil
+                    }
+                    
+                    let birthday = timestamp.dateValue()
+                    
                     if fullName.lowercased().contains(lowercasedQuery) {
                         return ChatUser(
                             id: doc.documentID,
                             firstName: firstName,
-                            lastName: lastName
+                            lastName: lastName,
+                            birthday: birthday,
+                            avatar: avatar
                         )
                     }
                     

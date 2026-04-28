@@ -15,13 +15,10 @@ final class PostViewController: UIViewController {
         title = post?.author ?? "-"
         view.backgroundColor = UIColor(named: "SecondColor")
         
-        // add a button in the navigtion bar
         let barButton = UIBarButtonItem(title: "Инфо", style: .done, target: self, action: #selector(tapInfoButton))
         navigationItem.rightBarButtonItem = barButton
     }
     
     @objc func tapInfoButton() {
-        let infoVC = InfoViewController()
-        present(infoVC, animated: true, completion: nil)
     }
 }

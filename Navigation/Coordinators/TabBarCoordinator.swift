@@ -22,21 +22,22 @@ final class TabBarCoordinator: AppCoordinator {
         let feedNavigationController = UINavigationController()
         let profileNavigationController = UINavigationController()
         let favoritesNavigationController = UINavigationController()
-        let mapNavigationController = UINavigationController()
         let chatsNavigationController = UINavigationController()
         
         let feedCoordinator = FeedCoordinator(navigationController: feedNavigationController)
         let profileCoordinator = ProfileCoordinator(navigationController: profileNavigationController)
         let favoritesCoordinator = FavoritesCoordinator(navigationController: favoritesNavigationController)
-        let mapCoordinator = MapCoordinator(navigationController: mapNavigationController)
         let chatsCoordinator = ChatsCoordinator(navigationController: chatsNavigationController)
         
-        childCoordinators = [profileCoordinator, feedCoordinator, chatsCoordinator, favoritesCoordinator, mapCoordinator]
+        profileCoordinator.onLogout = { [weak self] in
+            self?.showLoginFlow()
+        }
+        
+        childCoordinators = [profileCoordinator, feedCoordinator, chatsCoordinator, favoritesCoordinator]
         
         feedCoordinator.start()
         profileCoordinator.start()
         favoritesCoordinator.start()
-        mapCoordinator.start()
         chatsCoordinator.start()
         
         profileNavigationController.tabBarItem = UITabBarItem(title: "Профиль",
@@ -51,17 +52,20 @@ final class TabBarCoordinator: AppCoordinator {
                                             image: UIImage(systemName: "star"),
                                             selectedImage: UIImage(systemName: "star.fill"))
         
-        mapNavigationController.tabBarItem = UITabBarItem(title: "Карты",
-                                                          image: UIImage(systemName: "map"),
-                                                          selectedImage: UIImage(systemName: "map.fill"))
-        
         chatsNavigationController.tabBarItem = UITabBarItem(title: "Чаты",
                                                             image: UIImage(systemName: "bubble.left"),
                                                             selectedImage: UIImage(systemName: "bubble.left.fill"))
                                                           
-        tabBarController.viewControllers = [profileNavigationController, feedNavigationController, chatsNavigationController, favoritesNavigationController, mapNavigationController]
+        tabBarController.viewControllers = [profileNavigationController, feedNavigationController, chatsNavigationController, favoritesNavigationController]
         
         navigationController.setViewControllers([tabBarController], animated: true)
 
+    }
+    
+    private func showLoginFlow() {
+        childCoordinators.removeAll()
+
+        let loginCoordinator = LoginCoordinator(navigationController: navigationController)
+        loginCoordinator.start()
     }
 }

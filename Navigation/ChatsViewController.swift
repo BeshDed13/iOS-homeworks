@@ -41,7 +41,11 @@ final class ChatsViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
 
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(ChatCell.self, forCellReuseIdentifier: "ChatCell")
+        tableView.contentInsetAdjustmentBehavior = .automatic
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
+        tableView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
+        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 8))
     }
     
     private func setupViews() {
@@ -68,9 +72,9 @@ final class ChatsViewController: UIViewController {
         viewModel.onUpdate = { [weak self] in
             DispatchQueue.main.async {
                 guard let self = self else { return }
-
+                
                 self.tableView.reloadData()
-                self.emptyLabel.isHidden = !self.viewModel.chats.isEmpty
+                self.emptyLabel.isHidden = !self.viewModel.items.isEmpty
             }
         }
     }
@@ -88,25 +92,26 @@ final class ChatsViewController: UIViewController {
 extension ChatsViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.chats.count
+        viewModel.items.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        let chat = viewModel.chats[indexPath.row]
+        let item = viewModel.items[indexPath.row]
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ChatCell", for: indexPath) as! ChatCell
         
-        cell.textLabel?.text = chat.lastMessage.isEmpty ? "Новый чат" : chat.lastMessage
+        cell.configure(with: item)
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let chat = viewModel.chats[indexPath.row]
+        
+        let item = viewModel.items[indexPath.row]
         
         let vc = ChatViewController()
-        vc.chatId = chat.id
+        vc.chatId = item.id
         
         navigationController?.pushViewController(vc, animated: true)
     }

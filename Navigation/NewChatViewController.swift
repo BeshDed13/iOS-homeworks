@@ -56,7 +56,9 @@ final class NewChatViewController: UIViewController {
     private func setupTable() {
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(NewChatCell.self, forCellReuseIdentifier: NewChatCell.identifier)
+        tableView.rowHeight = 70
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 74, bottom: 0, right: 12)
     }
     
     private func bind() {
@@ -82,8 +84,13 @@ extension NewChatViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let user = viewModel.users[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = "\(user.firstName) \(user.lastName)"
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: NewChatCell.identifier,
+            for: indexPath
+            ) as? NewChatCell else {
+            return UITableViewCell()
+        }
+        cell.configure(with: user)
         return cell
     }
     
