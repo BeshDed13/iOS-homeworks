@@ -18,12 +18,20 @@ final class FeedViewController: UIViewController {
         return table
     }()
     
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Лента"
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.textAlignment = .left
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = UIColor(named: "FirstColor")
         
-        navigationItem.title = "Лента"
+        navigationItem.titleView = titleLabel
         
         view.addSubview(tableView)
         

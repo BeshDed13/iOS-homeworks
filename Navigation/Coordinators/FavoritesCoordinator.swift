@@ -21,7 +21,6 @@ final class FavoritesCoordinator: AppCoordinator {
     func start() {
         let favoritesService = FavoritesService()
         let favoritesVC = FavoritesViewController(favoritesService: favoritesService)
-        favoritesVC.title = "Favorites"
         navigationController.setViewControllers([favoritesVC], animated: true)
     }
 }

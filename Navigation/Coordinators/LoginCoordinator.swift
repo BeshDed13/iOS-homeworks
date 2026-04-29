@@ -18,8 +18,10 @@ final class LoginCoordinator: AppCoordinator {
     }
 
     func start() {
-        let loginVC = LoginViewController()
+        let viewModel = LogInViewModel()
+        let loginVC = LoginViewController(coordinator: self, viewModel: viewModel)
         loginVC.coordinator = self
+        
         navigationController.setViewControllers([loginVC], animated: true)
     }
 

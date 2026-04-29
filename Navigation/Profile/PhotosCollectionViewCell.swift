@@ -12,8 +12,6 @@ final class PhotosCollectionViewCell: UICollectionViewCell {
         photos.translatesAutoresizingMaskIntoConstraints = false
         return photos
     }()
-
-    // MARK: - Init section
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,8 +32,6 @@ final class PhotosCollectionViewCell: UICollectionViewCell {
             photo.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
-    
-    // MARK: - Run loop
     
     public func configCellCollection(photo: UIImage) {
         self.photo.image = photo

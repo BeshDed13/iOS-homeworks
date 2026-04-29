@@ -25,16 +25,22 @@ final class ProfileViewController: UIViewController {
         return table
     }()
     
-    // MARK: - Lifecycle
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Профиль"
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.textAlignment = .left
+        return label
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
     
         view.backgroundColor = UIColor(named: "FirstColor")
         
-        navigationItem.title = "Профиль"
+        navigationItem.titleView = titleLabel
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "Выйти",
+            image: UIImage(systemName: "rectangle.portrait.and.arrow.right"),
             style: .plain,
             target: self,
             action: #selector(didTapLogout)
@@ -45,8 +51,6 @@ final class ProfileViewController: UIViewController {
         setupTableView()
         fetchUser()
     }
-    
-    // MARK: - Setup
     
     private func setupViews() {
         view.addSubview(tableView)
@@ -109,8 +113,6 @@ final class ProfileViewController: UIViewController {
         }
     }
     
-    // MARK: - Actions
-    
     @objc private func reloadTableView() {
         fetchUser()
         tableView.refreshControl?.endRefreshing()
@@ -121,8 +123,6 @@ final class ProfileViewController: UIViewController {
     }
 }
 
-// MARK: - UITableViewDataSource
-
 extension ProfileViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -130,11 +130,9 @@ extension ProfileViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1 // только PhotosTableViewCell
+        return 1
     }
 }
-
-// MARK: - UITableViewDelegate
 
 extension ProfileViewController: UITableViewDelegate {
     
@@ -161,7 +159,7 @@ extension ProfileViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 220
+        return 160
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

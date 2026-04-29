@@ -51,12 +51,17 @@ final class LogInViewModel {
             let lastName = data["lastName"] as? String ?? ""
             let status = data["status"] as? String ?? "Online"
             let avatarId = data["avatarId"] as? String ?? "avatar1"
+            let gender = data["gender"] as? String ?? "male"
+            let birthday = (data["birthday"] as? Timestamp)?.dateValue()
+            
             
             let user = User(
                 login: email,
                 fullName: "\(name) \(lastName)",
                 status: status,
-                avatarId: avatarId
+                avatarId: avatarId,
+                gender: gender,
+                birthday: birthday!
             )
             
             completion(.success(user))

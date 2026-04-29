@@ -11,8 +11,6 @@ class PhotosViewController: UIViewController {
     let photoIdent = "photoCell"
     let imagePublisher = ImagePublisherFacade()
     var images: [UIImage] = []
-
-    // MARK: Visual objects
     
     lazy var layout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
@@ -31,12 +29,10 @@ class PhotosViewController: UIViewController {
         return photos
     }()
     
-    // MARK: - Setup section
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "Photo Gallery"
+        self.title = "Фотогалерея"
         self.view.addSubview(photosCollectionView)
         self.photosCollectionView.dataSource = self
         self.photosCollectionView.delegate = self
@@ -77,8 +73,6 @@ extension PhotosViewController: ImageLibrarySubscriber {
         photosCollectionView.scrollToItem(at: item, at: .bottom, animated: true)
     }
 }
-
-// MARK: - Extensions
 
 extension PhotosViewController: UICollectionViewDelegateFlowLayout {
 

@@ -10,7 +10,7 @@ import FirebaseAuth
 
 final class ChatViewModel {
     
-    private let service = ChatService()
+    private let service: ChatService
     
     var messages: [Message] = [] {
         didSet { onUpdate?() }
@@ -19,6 +19,10 @@ final class ChatViewModel {
     var onUpdate: (() -> Void)?
     
     private var chatId: String?
+    
+    init(service: ChatService) {
+        self.service = service
+    }
     
     func start(chatId: String) {
         self.chatId = chatId

@@ -32,12 +32,16 @@ final class ProfileViewModel {
             let lastName = data["lastName"] as? String ?? ""
             let status = data["status"] as? String ?? ""
             let avatarId = data["avatarId"] as? String ?? ""
+            let gender = data["gender"] as? String ?? "male"
+            let birthday = (data["birthday"] as? Timestamp)?.dateValue()
             
             let user = User(
                 login: data["email"] as? String ?? "",
                 fullName: "\(name) \(lastName)",
                 status: status,
-                avatarId: avatarId
+                avatarId: avatarId,
+                gender: gender,
+                birthday: birthday!
             )
             
             completion(.success(user))

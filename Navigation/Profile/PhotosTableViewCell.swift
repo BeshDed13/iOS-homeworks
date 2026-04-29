@@ -7,13 +7,11 @@ import UIKit
 
 class PhotosTableViewCell: UITableViewCell {
     
-    // MARK: Visual objects
-    
     var labelPhotos: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Фотографии"
-        label.font = .systemFont(ofSize: 24, weight: .bold)
+        label.text = "Галерея"
+        label.font = .systemFont(ofSize: 16, weight: .bold)
         label.textColor = UIColor(named: "TextColor")
         return label
     }()
@@ -44,8 +42,6 @@ class PhotosTableViewCell: UITableViewCell {
         preview.clipsToBounds = true
         return preview
     }
-
-    // MARK: - Init section
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -60,7 +56,6 @@ class PhotosTableViewCell: UITableViewCell {
         fatalError("lol")
     }
     
-    // get 3 preview images
     private func setupPreviews() {
         for ind in 0...2 {
             let image = getPreviewImage(index: ind)

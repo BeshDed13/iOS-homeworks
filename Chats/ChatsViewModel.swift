@@ -11,7 +11,7 @@ import FirebaseFirestore
 
 final class ChatsViewModel {
     
-    private let service = ChatService()
+    private let service: ChatService
     private let db = Firestore.firestore()
     
     private var usersCache: [String: User] = [:]
@@ -21,6 +21,10 @@ final class ChatsViewModel {
     }
     
     var onUpdate: (() -> Void)?
+    
+    init(service: ChatService) {
+        self.service = service
+    }
     
     func startListening() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
@@ -55,7 +59,9 @@ final class ChatsViewModel {
                     login: companionId,
                     fullName: "\(data["name"] as? String ?? "") \(data["lastName"] as? String ?? "")",
                     status: data["status"] as? String ?? "",
-                    avatarId: data["avatarId"] as? String ?? ""
+                    avatarId: data["avatarId"] as? String ?? "",
+                    gender: data["gender"] as? String ?? "",
+                    birthday: (data["birthday"] as? Timestamp)?.dateValue() ?? Date()
                 )
                 
                 self.usersCache[companionId] = user

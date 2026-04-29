@@ -22,9 +22,19 @@ final class FavoritesViewController: UIViewController, UITableViewDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Избранное"
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.textAlignment = .left
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Избранное"
+        view.backgroundColor = UIColor(named: "FirstColor")
+        
+        navigationItem.titleView = titleLabel
         view.backgroundColor = UIColor(named: "FirstColor")
         setupTableView()
     }

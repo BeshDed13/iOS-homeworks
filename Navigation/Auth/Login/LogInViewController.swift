@@ -10,30 +10,38 @@ final class LoginViewController: UIViewController {
     
     weak var coordinator: LoginCoordinator?
     
-    private let viewModel = LogInViewModel()
+    private let viewModel: LogInViewModel
     
-    // MARK: Visual content
+    init(coordinator: LoginCoordinator?, viewModel: LogInViewModel) {
+        self.coordinator = coordinator
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
     
-    var loginScrollView: UIScrollView = {
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private let loginScrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
     
-    var contentView: UIView = {
+    private let contentView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    var vkLogo: UIImageView = {
+    private let vkLogo: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "vkLogo")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
-    var loginStackView: UIStackView = {
+    private let loginStackView: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
@@ -56,7 +64,6 @@ final class LoginViewController: UIViewController {
             button.setBackgroundImage(pixel.image(alpha: 0.6), for: .highlighted)
             button.setBackgroundImage(pixel.image(alpha: 0.4), for: .disabled)
         }
-        
         button.setTitle("Войти", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(touchLoginButton), for: .touchUpInside)
@@ -77,7 +84,7 @@ final class LoginViewController: UIViewController {
         return button
     }()
     
-    var loginField: UITextField = {
+    private let loginField: UITextField = {
         let login = UITextField()
         login.translatesAutoresizingMaskIntoConstraints = false
         login.placeholder = "Почта"
@@ -92,7 +99,7 @@ final class LoginViewController: UIViewController {
         return login
     }()
     
-    var passwordField: UITextField = {
+    private let passwordField: UITextField = {
         let password = UITextField()
         password.translatesAutoresizingMaskIntoConstraints = false
         password.leftViewMode = .always
@@ -121,8 +128,6 @@ final class LoginViewController: UIViewController {
         return label
     }()
     
-    // MARK: - Setup section
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -137,10 +142,11 @@ final class LoginViewController: UIViewController {
             rememberMeSwitch.isOn = true
         }
         
-        setupViews()
+        setupUI()
+        setupConstraints()
     }
     
-    private func setupViews() {
+    private func setupUI() {
         view.addSubview(loginScrollView)
         loginScrollView.addSubview(contentView)
         
@@ -151,13 +157,10 @@ final class LoginViewController: UIViewController {
         
         loginField.delegate = self
         passwordField.delegate = self
-        
-        setupConstraints()
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            
             loginScrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             loginScrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             loginScrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -195,7 +198,6 @@ final class LoginViewController: UIViewController {
             signupButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstants.leadingMargin),
             signupButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
             signupButton.heightAnchor.constraint(equalToConstant: 50),
-            
         ])
     }
     
@@ -215,10 +217,7 @@ final class LoginViewController: UIViewController {
         
     }
     
-    // MARK: - Event handlers
-    
     @objc private func touchLoginButton() {
-        
         guard let login = loginField.text,
               let password = passwordField.text,
               !login.isEmpty,
@@ -259,7 +258,6 @@ final class LoginViewController: UIViewController {
     }
     
     private func handleAuthError(_ error: Error) {
-        
         let nsError = error as NSError
         
         if let errorCode = AuthErrorCode(rawValue: nsError.code) {
@@ -288,18 +286,15 @@ final class LoginViewController: UIViewController {
     }
     
     private func showAlert(message: String) {
-        
         let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
         
         alert.addAction(UIAlertAction(title: "ОК", style: .default))
         present(alert, animated: true)
     }
 }
-    // MARK: - Extension
     
     extension LoginViewController: UITextFieldDelegate {
         
-        // tap 'done' on the keyboard
         func textFieldShouldReturn(_ textField: UITextField) -> Bool {
             textField.resignFirstResponder()
             return true

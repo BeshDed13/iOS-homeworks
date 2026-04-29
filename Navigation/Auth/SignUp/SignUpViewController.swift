@@ -15,8 +15,6 @@ final class SignUpViewController: UIViewController {
     
     private var selectedAvatar: Avatar = .avatar1
     
-    // MARK: - Init
-    
     init(coordinator: LoginCoordinator?, viewModel: SignUpViewModel) {
         self.coordinator = coordinator
         self.viewModel = viewModel
@@ -26,8 +24,6 @@ final class SignUpViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: - UI
     
     private let scrollView: UIScrollView = {
         let view = UIScrollView()
@@ -101,7 +97,6 @@ final class SignUpViewController: UIViewController {
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
         stack.spacing = 10
-        stack.distribution = .fillEqually
         return stack
     }()
 
@@ -221,13 +216,11 @@ final class SignUpViewController: UIViewController {
         return label
     }()
     
-    // MARK: - Lifecycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(named: "FirstColor")
         
-        setupViews()
+        setupUI()
         setupConstraints()
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(selectAvatar))
@@ -245,20 +238,16 @@ final class SignUpViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        
         NotificationCenter.default.removeObserver(self)
     }
     
-    // MARK: - Setup
-    
-    private func setupViews() {
+    private func setupUI() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         
@@ -267,7 +256,6 @@ final class SignUpViewController: UIViewController {
         contentView.addSubview(signUpButton)
         contentView.addSubview(infoLabel)
         contentView.addSubview(secondInfoLabel)
-        contentView.addSubview(avatarImageView)
         contentView.addSubview(horizontalStack)
         contentView.addSubview(agreementLabel)
 
@@ -287,7 +275,6 @@ final class SignUpViewController: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -306,7 +293,6 @@ final class SignUpViewController: UIViewController {
             infoLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
             infoLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
             
-
             emailStackView.topAnchor.constraint(equalTo: infoLabel.bottomAnchor, constant: 10),
             emailStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             emailStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -338,8 +324,6 @@ final class SignUpViewController: UIViewController {
         ])
     }
     
-    // MARK: - Actions
-    
     @objc private func touchSignUpButton() {
         
         guard let email = loginField.text,
@@ -357,8 +341,6 @@ final class SignUpViewController: UIViewController {
         }
         
         let gender = genderControl.selectedSegmentIndex == 0 ? "male" : "female"
-        
-        let avatar = selectedAvatar
         
         viewModel.signUp(
             email: email,
@@ -399,8 +381,6 @@ final class SignUpViewController: UIViewController {
         birthDateField.text = formatter.string(from: datePicker.date)
     }
     
-    // MARK: - Keyboard
-    
     @objc private func keyboardShow(notification: NSNotification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
         
@@ -410,8 +390,6 @@ final class SignUpViewController: UIViewController {
     @objc private func keyboardHide(notification: NSNotification) {
         scrollView.contentInset = .zero
     }
-    
-    // MARK: - Alert
     
     private func showAlert(message: String) {
         let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)

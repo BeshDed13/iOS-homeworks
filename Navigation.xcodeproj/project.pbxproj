@@ -30,6 +30,48 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		0A5A7DAD2FA27B1A00A84F13 /* Exceptions for "Chats" folder in "Navigation" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Chat.swift,
+				ChatCell.swift,
+				ChatItem.swift,
+				ChatService.swift,
+				ChatsViewController.swift,
+				ChatsViewModel.swift,
+				ChatUser.swift,
+				ChatViewController.swift,
+				ChatViewModel.swift,
+				FindUserService.swift,
+				Message.swift,
+				MessageCell.swift,
+				NewChatCell.swift,
+				NewChatViewController.swift,
+				NewChatViewModel.swift,
+			);
+			target = 0AEF97512EBE6C6D00ACF87E /* Navigation */;
+		};
+		0A5A7DAE2FA27B1A00A84F13 /* Exceptions for "Chats" folder in "NavigationTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Chat.swift,
+				ChatCell.swift,
+				ChatItem.swift,
+				ChatService.swift,
+				ChatsViewController.swift,
+				ChatsViewModel.swift,
+				ChatUser.swift,
+				ChatViewController.swift,
+				ChatViewModel.swift,
+				FindUserService.swift,
+				Message.swift,
+				MessageCell.swift,
+				NewChatCell.swift,
+				NewChatViewController.swift,
+				NewChatViewModel.swift,
+			);
+			target = 0A8FD18B2F60AA0300FDBDA8 /* NavigationTests */;
+		};
 		0AEF97642EBE6C7500ACF87E /* Exceptions for "Navigation" folder in "Navigation" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -40,6 +82,15 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		0A5A7DAC2FA27B1600A84F13 /* Chats */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				0A5A7DAD2FA27B1A00A84F13 /* Exceptions for "Chats" folder in "Navigation" target */,
+				0A5A7DAE2FA27B1A00A84F13 /* Exceptions for "Chats" folder in "NavigationTests" target */,
+			);
+			path = Chats;
+			sourceTree = "<group>";
+		};
 		0A8FD18D2F60AA0300FDBDA8 /* NavigationTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = NavigationTests;
@@ -89,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				0AEF97542EBE6C6D00ACF87E /* Navigation */,
+				0A5A7DAC2FA27B1600A84F13 /* Chats */,
 				0A8FD18D2F60AA0300FDBDA8 /* NavigationTests */,
 				0A577C252F4A2F340069E110 /* Frameworks */,
 				0AEF97532EBE6C6D00ACF87E /* Products */,
@@ -121,6 +173,7 @@
 				0A8FD1912F60AA0300FDBDA8 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				0A5A7DAC2FA27B1600A84F13 /* Chats */,
 				0A8FD18D2F60AA0300FDBDA8 /* NavigationTests */,
 			);
 			name = NavigationTests;

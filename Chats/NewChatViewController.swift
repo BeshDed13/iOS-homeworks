@@ -9,27 +9,51 @@ import UIKit
 
 final class NewChatViewController: UIViewController {
     
-    private let searchBar = UISearchBar()
-    private let tableView = UITableView()
+    var onChatCreated: ((String) -> Void)?
+    private var viewModel: NewChatViewModelProtocol
     
-    private let viewModel = NewChatViewModel()
+    init(viewModel: NewChatViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private let searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.placeholder = "Поиск"
+        searchBar.searchTextField.textColor = .label
+        searchBar.searchTextField.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        return searchBar
+    }()
+    
+    private let tableView: UITableView = {
+        let tableView = UITableView()
+        return tableView
+    }()
+    
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Найти собеседника"
+        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        label.textAlignment = .left
+        return label
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = UIColor(named: "FirstColor")
+        
+        navigationItem.titleView = titleLabel
 
         searchBar.delegate = self
         setupViews()
         setupConstraints()
         setupTable()
         bind()
-
-        viewModel.onChatCreated = { [weak self] chatId in
-            let vc = ChatViewController()
-            vc.chatId = chatId
-            self?.navigationController?.pushViewController(vc, animated: true)
-        }
     }
     
     private func setupViews() {
@@ -66,6 +90,10 @@ final class NewChatViewController: UIViewController {
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
             }
+        }
+        
+        viewModel.onChatCreated = { [weak self] chatId in
+            self?.onChatCreated?(chatId)
         }
     }
     

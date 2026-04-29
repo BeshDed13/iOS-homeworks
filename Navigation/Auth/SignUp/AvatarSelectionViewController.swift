@@ -14,6 +14,15 @@ final class AvatarSelectionViewController: UIViewController {
     
     private var selectedIndexPath: IndexPath?
     
+    private let titleLabel: UILabel = {
+        let lbl = UILabel()
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        lbl.text = "Выберите своего аватара"
+        lbl.font = .systemFont(ofSize: 24, weight: .bold)
+        lbl.textAlignment = .center
+        return lbl
+    }()
+    
     private lazy var collectionView: UICollectionView = {
         
         let layout = UICollectionViewFlowLayout()
@@ -32,8 +41,6 @@ final class AvatarSelectionViewController: UIViewController {
         return cv
     }()
     
-    // MARK: - Init
-    
     init(completion: @escaping (Avatar) -> Void) {
         self.completion = completion
         super.init(nibName: nil, bundle: nil)
@@ -41,21 +48,27 @@ final class AvatarSelectionViewController: UIViewController {
     
     required init?(coder: NSCoder) { fatalError() }
     
-    // MARK: - Lifecycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = UIColor.systemBackground
         
         setupUI()
+        setupConstraints()
     }
     
     private func setupUI() {
         view.addSubview(collectionView)
-        
+        view.addSubview(titleLabel)
+    }
+    
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            collectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -95,48 +108,5 @@ extension AvatarSelectionViewController: UICollectionViewDataSource, UICollectio
         completion(avatar)
         
         dismiss(animated: true)
-    }
-}
-
-final class AvatarCell: UICollectionViewCell {
-    
-    private let imageView: UIImageView = {
-        let iv = UIImageView()
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        iv.contentMode = .scaleAspectFill
-        iv.clipsToBounds = true
-        iv.layer.cornerRadius = 20
-        return iv
-    }()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        contentView.addSubview(imageView)
-        
-        contentView.layer.cornerRadius = 20
-        contentView.layer.borderWidth = 2
-        contentView.layer.borderColor = UIColor.clear.cgColor
-        
-        NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
-        ])
-    }
-    
-    required init?(coder: NSCoder) { fatalError() }
-    
-    func configure(with avatar: Avatar) {
-        imageView.image = avatar.image
-    }
-    
-    override var isSelected: Bool {
-        didSet {
-            contentView.layer.borderColor = isSelected
-            ? UIColor.systemGreen.cgColor
-            : UIColor.clear.cgColor
-        }
     }
 }

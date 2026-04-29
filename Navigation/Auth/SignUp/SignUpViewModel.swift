@@ -79,7 +79,9 @@ final class SignUpViewModel {
                 login: email,
                 fullName: "\(name) \(lastName)",
                 status: "Online",
-                avatarId: avatarId
+                avatarId: avatarId,
+                gender: gender,
+                birthday: birthday
             )
             
             completion(.success(user))

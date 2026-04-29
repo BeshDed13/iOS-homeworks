@@ -41,7 +41,9 @@ final class Checker: CheckerServiceProtocol {
                     login: firebaseUser.email ?? "",
                     fullName: firebaseUser.email ?? "",
                     status: "Online",
-                    avatarId: "avatar1"
+                    avatarId: "avatar1",
+                    gender: "Male",
+                    birthday: Date()
                 )
                 completion(.success(user))
             } else {
@@ -66,7 +68,9 @@ final class Checker: CheckerServiceProtocol {
                     login: firebaseUser.email ?? "",
                     fullName: firebaseUser.email ?? "",
                     status: "Online",
-                    avatarId: "avatar1"
+                    avatarId: "avatar1",
+                    gender: "Male",
+                    birthday: Date()
                 )
                 completion(.success(user))
             } else {

@@ -9,7 +9,19 @@ import UIKit
 
 final class ChatsViewController: UIViewController {
     
-    private let viewModel = ChatsViewModel()
+    private let viewModel: ChatsViewModel
+    
+    var onChatSelected: ((ChatItem) -> Void)?
+    var onAddChat: (() -> Void)?
+    
+    init(viewModel: ChatsViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private let tableView = UITableView()
     
@@ -21,12 +33,20 @@ final class ChatsViewController: UIViewController {
         return label
     }()
     
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Чаты"
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.textAlignment = .left
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = UIColor(named: "FirstColor")
         
-        navigationItem.title = "Чаты"
+        navigationItem.titleView = titleLabel
 
         setupViews()
         setupConstraints()
@@ -43,9 +63,10 @@ final class ChatsViewController: UIViewController {
 
         tableView.register(ChatCell.self, forCellReuseIdentifier: "ChatCell")
         tableView.contentInsetAdjustmentBehavior = .automatic
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
         tableView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
         tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 8))
+        tableView.rowHeight = 70
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 74, bottom: 0, right: 12)
     }
     
     private func setupViews() {
@@ -64,7 +85,9 @@ final class ChatsViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
             emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            emptyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         ])
     }
     
@@ -84,8 +107,7 @@ final class ChatsViewController: UIViewController {
     }
     
     @objc private func addChat() {
-        let vc = NewChatViewController()
-        navigationController?.pushViewController(vc, animated: true)
+        onAddChat?()
     }
 }
 
@@ -109,10 +131,6 @@ extension ChatsViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let item = viewModel.items[indexPath.row]
-        
-        let vc = ChatViewController()
-        vc.chatId = item.id
-        
-        navigationController?.pushViewController(vc, animated: true)
+        onChatSelected?(item)
     }
 }

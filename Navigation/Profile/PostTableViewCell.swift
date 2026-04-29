@@ -5,14 +5,12 @@
 
 import UIKit
 
-class PostTableViewCell: UITableViewCell {
+final class PostTableViewCell: UITableViewCell {
     
     private var viewCounter = 0
     var onLike: (() -> Void)?
-
-    // MARK: Visual objects
     
-    var postAuthor: UILabel = {
+    private let postAuthor: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 18, weight: .bold)
@@ -21,7 +19,7 @@ class PostTableViewCell: UITableViewCell {
         return label
     }()
 
-    var postImage: UIImageView = {
+    private let postImage: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.backgroundColor = UIColor(named: "FirstColor")
@@ -29,7 +27,7 @@ class PostTableViewCell: UITableViewCell {
         return image
     }()
 
-    var postDescription: UILabel = {
+    private let postDescription: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 14)
@@ -38,7 +36,7 @@ class PostTableViewCell: UITableViewCell {
         return label
     }()
 
-    var postLikes: UILabel = {
+    private let postLikes: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 16)
@@ -46,8 +44,7 @@ class PostTableViewCell: UITableViewCell {
         return label
     }()
 
-
-    var postViews: UILabel = {
+    private let postViews: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 16)
@@ -55,8 +52,6 @@ class PostTableViewCell: UITableViewCell {
         return label
     }()
 
-    // MARK: - Init section
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubviews(postAuthor, postImage, postDescription, postLikes, postViews)
@@ -98,27 +93,41 @@ class PostTableViewCell: UITableViewCell {
         doubleTap.numberOfTapsRequired = 2
         contentView.addGestureRecognizer(doubleTap)
     }
-
-    // MARK: - Run loop
     
     func configPostArray(post: Post) {
         postAuthor.text = post.author
         postDescription.text = post.description
         postImage.image = UIImage(named: post.image)
         
-        postLikes.text = String(format: NSLocalizedString("Лайки", comment: ""), post.likes)
-        
-        viewCounter = post.views
-        postViews.text = String(format: NSLocalizedString("Просмотры", comment: ""), viewCounter)
-    }
-
-    func incrementPostViewsCounter() {
-        viewCounter += 1
-        postViews.text = String(format: NSLocalizedString("Просмотры", comment: ""), viewCounter)
+        postLikes.attributedText = makeIconText(
+            systemName: "heart",
+            text: "\(post.likes)"
+        )
+        postViews.attributedText = makeIconText(
+            systemName: "eye",
+            text: "\(post.views)"
+        )
     }
     
     @objc private func handleDoubleTap() {
         onLike?()
+    }
+    
+    private func makeIconText(systemName: String, text: String) -> NSAttributedString {
+        
+        let attachment = NSTextAttachment()
+        attachment.image = UIImage(systemName: systemName)
+        
+        let icon = NSAttributedString(attachment: attachment)
+        let space = NSAttributedString(string: " ")
+        let value = NSAttributedString(string: text)
+        
+        let result = NSMutableAttributedString()
+        result.append(icon)
+        result.append(space)
+        result.append(value)
+        
+        return result
     }
 }
 

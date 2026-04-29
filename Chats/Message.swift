@@ -6,10 +6,15 @@
 //
 
 import Foundation
+import FirebaseAuth
 
 struct Message {
     let id: String
     let text: String
     let senderId: String
     let createdAt: Date
+    
+    var isCurrentUser: Bool {
+        return senderId == Auth.auth().currentUser?.uid
+    }
 }
