@@ -41,7 +41,7 @@ final class SignUpViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Регистрация аккаунта"
-        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.font = AppFonts.title
         label.textAlignment = .center
         return label
     }()
@@ -50,7 +50,7 @@ final class SignUpViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Укажите данные для входа"
-        label.font = .systemFont(ofSize: 16, weight: .regular)
+        label.font = AppFonts.body
         label.textAlignment = .left
         return label
     }()
@@ -198,7 +198,7 @@ final class SignUpViewController: UIViewController {
     private lazy var signUpButton: UIButton = {
         let btn = UIButton()
         btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.backgroundColor = .systemGreen
+        btn.backgroundColor = AppColors.greenButton
         btn.setTitle("Завершить регистрацию", for: .normal)
         btn.layer.cornerRadius = LayoutConstants.cornerRadius
         btn.addTarget(self, action: #selector(touchSignUpButton), for: .touchUpInside)
@@ -218,7 +218,9 @@ final class SignUpViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(named: "FirstColor")
+        view.backgroundColor = AppColors.firstBackground
+        
+        scrollView.keyboardDismissMode = .interactive
         
         setupUI()
         setupConstraints()
@@ -234,6 +236,12 @@ final class SignUpViewController: UIViewController {
         birthDateField.inputView = datePicker
 
         datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
+        
+        loginField.delegate = self
+        passwordField.delegate = self
+        nameField.delegate = self
+        lastnameField.delegate = self
+        birthDateField.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -280,11 +288,11 @@ final class SignUpViewController: UIViewController {
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
-            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
             
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 40),
             titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -321,6 +329,7 @@ final class SignUpViewController: UIViewController {
             agreementLabel.topAnchor.constraint(equalTo: signUpButton.bottomAnchor, constant: 10),
             agreementLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             agreementLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            agreementLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20)
         ])
     }
     
@@ -382,19 +391,32 @@ final class SignUpViewController: UIViewController {
     }
     
     @objc private func keyboardShow(notification: NSNotification) {
-        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-        
-        scrollView.contentInset.bottom = keyboardFrame.height
+        guard let frame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+
+        let keyboardHeight = frame.cgRectValue.height
+        let bottomInset = keyboardHeight - view.safeAreaInsets.bottom
+
+        scrollView.contentInset.bottom = bottomInset
+        scrollView.verticalScrollIndicatorInsets.bottom = bottomInset
     }
-    
+
     @objc private func keyboardHide(notification: NSNotification) {
         scrollView.contentInset = .zero
+        scrollView.verticalScrollIndicatorInsets = .zero
     }
     
     private func showAlert(message: String) {
         let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "ОК", style: .default))
         present(alert, animated: true)
+    }
+}
+
+extension SignUpViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }
 

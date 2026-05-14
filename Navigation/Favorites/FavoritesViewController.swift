@@ -25,17 +25,16 @@ final class FavoritesViewController: UIViewController, UITableViewDelegate {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Избранное"
-        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.font = AppFonts.title
         label.textAlignment = .left
         return label
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(named: "FirstColor")
         
         navigationItem.titleView = titleLabel
-        view.backgroundColor = UIColor(named: "FirstColor")
+        view.backgroundColor = AppColors.firstBackground
         setupTableView()
     }
     
@@ -51,7 +50,7 @@ final class FavoritesViewController: UIViewController, UITableViewDelegate {
         tableView.frame = view.bounds
         tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         tableView.register(PostTableViewCell.self, forCellReuseIdentifier: "post")
-        tableView.backgroundColor = UIColor(named: "FirstColor")
+        tableView.backgroundColor = AppColors.firstBackground
         view.addSubview(tableView)
         
     }

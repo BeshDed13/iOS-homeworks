@@ -27,4 +27,9 @@ final class ProfileCoordinator: AppCoordinator {
     func didLogout() {
         onLogout?()
     }
+    
+    func openSettings() {
+        let vc = SettingsViewController()
+        navigationController.pushViewController(vc, animated: true)
+    }
 }

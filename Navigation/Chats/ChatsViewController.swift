@@ -36,7 +36,7 @@ final class ChatsViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Чаты"
-        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.font = AppFonts.title
         label.textAlignment = .left
         return label
     }()
@@ -44,7 +44,7 @@ final class ChatsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor(named: "FirstColor")
+        view.backgroundColor = AppColors.firstBackground
         
         navigationItem.titleView = titleLabel
 

@@ -4,17 +4,16 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class PostTableViewCell: UITableViewCell {
-    
-    private var viewCounter = 0
+
     var onLike: (() -> Void)?
-    
+
     private let postAuthor: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 18, weight: .bold)
-        label.textColor = UIColor(named: "TextColor")
+        label.font = AppFonts.body
         label.numberOfLines = 2
         return label
     }()
@@ -22,16 +21,16 @@ final class PostTableViewCell: UITableViewCell {
     private let postImage: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
-        image.backgroundColor = UIColor(named: "FirstColor")
+        image.backgroundColor = AppColors.secondBackground
         image.contentMode = .scaleAspectFill
+        image.clipsToBounds = true
         return image
     }()
 
     private let postDescription: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor(named: "TextColor")
+        label.font = AppFonts.body
         label.numberOfLines = 0
         return label
     }()
@@ -39,95 +38,193 @@ final class PostTableViewCell: UITableViewCell {
     private let postLikes: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 16)
-        label.textColor = UIColor(named: "TextColor")
+        label.font = AppFonts.body
         return label
     }()
 
     private let postViews: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 16)
-        label.textColor = UIColor(named: "TextColor")
+        label.font = AppFonts.body
         return label
     }()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.addSubviews(postAuthor, postImage, postDescription, postLikes, postViews)
+
+        backgroundColor = AppColors.secondBackground
+
+        contentView.addSubviews(
+            postAuthor,
+            postImage,
+            postDescription,
+            postLikes,
+            postViews
+        )
+
         setupConstraints()
         setupGesture()
-        self.selectionStyle = .default
+
+        selectionStyle = .none
     }
 
     required init?(coder: NSCoder) {
-        fatalError("lol")
+        fatalError("init(coder:) has not been implemented")
     }
-    
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        postImage.kf.cancelDownloadTask()
+        postImage.image = nil
+    }
+
     private func setupConstraints() {
+
         NSLayoutConstraint.activate([
-            postAuthor.topAnchor.constraint(equalTo: contentView.topAnchor, constant: LayoutConstants.indent),
-            postAuthor.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstants.leadingMargin),
-            postAuthor.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
 
-            postImage.widthAnchor.constraint(equalTo: contentView.widthAnchor),
-            postImage.heightAnchor.constraint(equalTo: postImage.widthAnchor, multiplier: 0.56),
-            postImage.topAnchor.constraint(equalTo: postAuthor.bottomAnchor, constant: LayoutConstants.indent),
+            postAuthor.topAnchor.constraint(
+                equalTo: contentView.topAnchor,
+                constant: LayoutConstants.indent
+            ),
 
-            postDescription.topAnchor.constraint(equalTo: postImage.bottomAnchor, constant: LayoutConstants.indent),
-            postDescription.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstants.leadingMargin),
-            postDescription.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
+            postAuthor.leadingAnchor.constraint(
+                equalTo: contentView.leadingAnchor,
+                constant: LayoutConstants.leadingMargin
+            ),
 
-            postLikes.topAnchor.constraint(equalTo: postDescription.bottomAnchor, constant: LayoutConstants.indent),
-            postLikes.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstants.leadingMargin),
-            postLikes.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -LayoutConstants.indent),
+            postAuthor.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: LayoutConstants.trailingMargin
+            ),
 
-            postViews.topAnchor.constraint(equalTo: postDescription.bottomAnchor, constant: LayoutConstants.indent),
-            postViews.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
-            postViews.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -LayoutConstants.indent)
+            postImage.topAnchor.constraint(
+                equalTo: postAuthor.bottomAnchor,
+                constant: LayoutConstants.indent
+            ),
+
+            postImage.leadingAnchor.constraint(
+                equalTo: contentView.leadingAnchor
+            ),
+
+            postImage.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor
+            ),
+
+            postImage.heightAnchor.constraint(
+                equalTo: postImage.widthAnchor,
+                multiplier: 0.56
+            ),
+
+            postDescription.topAnchor.constraint(
+                equalTo: postImage.bottomAnchor,
+                constant: LayoutConstants.indent
+            ),
+
+            postDescription.leadingAnchor.constraint(
+                equalTo: contentView.leadingAnchor,
+                constant: LayoutConstants.leadingMargin
+            ),
+
+            postDescription.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: LayoutConstants.trailingMargin
+            ),
+
+            postLikes.topAnchor.constraint(
+                equalTo: postDescription.bottomAnchor,
+                constant: LayoutConstants.indent
+            ),
+
+            postLikes.leadingAnchor.constraint(
+                equalTo: contentView.leadingAnchor,
+                constant: LayoutConstants.leadingMargin
+            ),
+
+            postLikes.bottomAnchor.constraint(
+                equalTo: contentView.bottomAnchor,
+                constant: -LayoutConstants.indent
+            ),
+
+            postViews.topAnchor.constraint(
+                equalTo: postDescription.bottomAnchor,
+                constant: LayoutConstants.indent
+            ),
+
+            postViews.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: LayoutConstants.trailingMargin
+            ),
+
+            postViews.bottomAnchor.constraint(
+                equalTo: contentView.bottomAnchor,
+                constant: -LayoutConstants.indent
+            )
         ])
     }
-    
+
     private func setupGesture() {
-        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap))
+
+        let doubleTap = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleDoubleTap)
+        )
+
         doubleTap.numberOfTapsRequired = 2
+
         contentView.addGestureRecognizer(doubleTap)
     }
-    
+
     func configPostArray(post: Post) {
+
         postAuthor.text = post.author
         postDescription.text = post.description
-        postImage.image = UIImage(named: post.image)
-        
+
+        if let url = URL(string: post.image) {
+
+            postImage.kf.setImage(
+                with: url
+            )
+        }
+
         postLikes.attributedText = makeIconText(
-            systemName: "heart",
+            systemName: "heart.fill",
             text: "\(post.likes)"
         )
+
         postViews.attributedText = makeIconText(
-            systemName: "eye",
+            systemName: "eye.fill",
             text: "\(post.views)"
         )
     }
-    
+
     @objc private func handleDoubleTap() {
         onLike?()
     }
-    
-    private func makeIconText(systemName: String, text: String) -> NSAttributedString {
-        
+
+    private func makeIconText(
+        systemName: String,
+        text: String
+    ) -> NSAttributedString {
+
         let attachment = NSTextAttachment()
+
         attachment.image = UIImage(systemName: systemName)
-        
-        let icon = NSAttributedString(attachment: attachment)
-        let space = NSAttributedString(string: " ")
-        let value = NSAttributedString(string: text)
-        
+
+        let icon = NSAttributedString(
+            attachment: attachment
+        )
+
+        let value = NSAttributedString(
+            string: " \(text)"
+        )
+
         let result = NSMutableAttributedString()
+
         result.append(icon)
-        result.append(space)
         result.append(value)
-        
+
         return result
     }
 }
-

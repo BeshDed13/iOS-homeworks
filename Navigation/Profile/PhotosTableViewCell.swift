@@ -5,85 +5,97 @@
 
 import UIKit
 
-class PhotosTableViewCell: UITableViewCell {
-    
-    var labelPhotos: UILabel = {
+final class PhotosTableViewCell: UITableViewCell {
+
+    private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Галерея"
         label.font = .systemFont(ofSize: 16, weight: .bold)
-        label.textColor = UIColor(named: "TextColor")
         return label
     }()
 
-    var arrowImage: UIImageView = {
-        let arrow = UIImageView()
-        arrow.translatesAutoresizingMaskIntoConstraints = false
-        arrow.image = UIImage(systemName: "arrow.right")?.withTintColor(.black, renderingMode: .alwaysOriginal)
-        return arrow
+    private let arrowImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(systemName: "chevron.right")
+        imageView.tintColor = .gray
+        return imageView
     }()
 
-    var stackViewImage: UIStackView = {
+    private let stackView: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .horizontal
-        stack.alignment = .center
+        stack.alignment = .fill
         stack.distribution = .fillEqually
         stack.spacing = 8
         return stack
     }()
 
-    func getPreviewImage(index: Int) -> UIImageView {
-        let preview = UIImageView()
-        preview.translatesAutoresizingMaskIntoConstraints = false
-        preview.image = Photos.shared.examples[index]
-        preview.contentMode = .scaleAspectFill
-        preview.layer.cornerRadius = 6
-        preview.clipsToBounds = true
-        return preview
-    }
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        contentView.addSubviews(labelPhotos, arrowImage, stackViewImage)
-        
-        setupPreviews()
+
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(arrowImageView)
+        contentView.addSubview(stackView)
+
         setupConstraints()
     }
 
     required init?(coder: NSCoder) {
-        fatalError("lol")
+        fatalError("init(coder:) has not been implemented")
     }
-    
-    private func setupPreviews() {
-        for ind in 0...2 {
-            let image = getPreviewImage(index: ind)
-            stackViewImage.addArrangedSubview(image)
-            NSLayoutConstraint.activate([
-                image.widthAnchor.constraint(greaterThanOrEqualToConstant: (contentView.frame.width - 24) / 4),
-                image.heightAnchor.constraint(equalTo: image.widthAnchor, multiplier: 0.56),
-            ])
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        clearImages()
+    }
+
+    func configure(with images: [UIImage]) {
+        clearImages()
+
+        let limitedImages = Array(images.prefix(3))
+
+        for image in limitedImages {
+            let imageView = makeImageView(image)
+            stackView.addArrangedSubview(imageView)
         }
     }
-    
+
+    private func makeImageView(_ image: UIImage) -> UIImageView {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = image
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 8
+        return imageView
+    }
+
+    private func clearImages() {
+        stackView.arrangedSubviews.forEach { view in
+            stackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+    }
+
     private func setupConstraints() {
+
         NSLayoutConstraint.activate([
-            labelPhotos.topAnchor.constraint(equalTo: contentView.topAnchor, constant: LayoutConstants.indentTwelve),
-            labelPhotos.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstants.indentTwelve),
-            labelPhotos.widthAnchor.constraint(equalToConstant: 80),
-            labelPhotos.heightAnchor.constraint(equalToConstant: 40),
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
 
-            arrowImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -LayoutConstants.indentTwelve),
-            arrowImage.centerYAnchor.constraint(equalTo: labelPhotos.centerYAnchor),
-            arrowImage.heightAnchor.constraint(equalToConstant: 40),
-            arrowImage.widthAnchor.constraint(equalToConstant: 40),
+            arrowImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
+            arrowImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            arrowImageView.widthAnchor.constraint(equalToConstant: 20),
+            arrowImageView.heightAnchor.constraint(equalToConstant: 20),
 
-            stackViewImage.topAnchor.constraint(equalTo: labelPhotos.bottomAnchor, constant: LayoutConstants.indentTwelve),
-            stackViewImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstants.indentTwelve),
-            stackViewImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -LayoutConstants.indentTwelve),
-            stackViewImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -LayoutConstants.indentTwelve),
+            stackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
+            stackView.heightAnchor.constraint(equalToConstant: 80)
         ])
     }
 }
-

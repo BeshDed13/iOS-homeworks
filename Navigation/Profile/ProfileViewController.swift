@@ -10,6 +10,9 @@ final class ProfileViewController: UIViewController {
     
     weak var coordinator: ProfileCoordinator?
     
+    private let storage = PhotoStorageService()
+    private var photos: [UIImage] = []
+    
     static let headerIdent = "header"
     static let photoIdent = "photo"
     
@@ -28,15 +31,22 @@ final class ProfileViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Профиль"
-        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.font = AppFonts.title
         label.textAlignment = .left
         return label
     }()
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        photos = storage.loadAllImages()
+        tableView.reloadData()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     
-        view.backgroundColor = UIColor(named: "FirstColor")
+        view.backgroundColor = AppColors.firstBackground
         
         navigationItem.titleView = titleLabel
         navigationItem.rightBarButtonItem = UIBarButtonItem(
@@ -44,6 +54,13 @@ final class ProfileViewController: UIViewController {
             style: .plain,
             target: self,
             action: #selector(didTapLogout)
+        )
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "gear"),
+            style: .plain,
+            target: self,
+            action: #selector(didTapSettings)
         )
         
         setupViews()
@@ -121,6 +138,10 @@ final class ProfileViewController: UIViewController {
     @objc private func didTapLogout() {
         showLogoutAlert()
     }
+    
+    @objc private func didTapSettings() {
+        coordinator?.openSettings()
+    }
 }
 
 extension ProfileViewController: UITableViewDataSource {
@@ -136,13 +157,18 @@ extension ProfileViewController: UITableViewDataSource {
 
 extension ProfileViewController: UITableViewDelegate {
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView,
+                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        let cell = tableView.dequeueReusableCell(
+        guard let cell = tableView.dequeueReusableCell(
             withIdentifier: Self.photoIdent,
             for: indexPath
-        ) as! PhotosTableViewCell
-        
+        ) as? PhotosTableViewCell else {
+            return UITableViewCell()
+        }
+
+        cell.configure(with: photos)
+
         return cell
     }
 
@@ -156,6 +182,11 @@ extension ProfileViewController: UITableViewDelegate {
         }
         
         return headerView
+    }
+    
+    func tableView(_ tableView: UITableView,
+                   heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 140
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

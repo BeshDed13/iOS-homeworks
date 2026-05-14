@@ -58,7 +58,7 @@ final class LoginViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        if let pixel = UIImage(named: "blue_pixel") {
+        if let pixel = AppColors.blueButton {
             button.setBackgroundImage(pixel.image(alpha: 1), for: .normal)
             button.setBackgroundImage(pixel.image(alpha: 0.8), for: .selected)
             button.setBackgroundImage(pixel.image(alpha: 0.6), for: .highlighted)
@@ -75,7 +75,7 @@ final class LoginViewController: UIViewController {
     lazy var signupButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .systemGreen
+        button.backgroundColor = AppColors.greenButton
         button.setTitle("Зарегистрироваться", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(touchSignUpButton), for: .touchUpInside)
@@ -93,7 +93,7 @@ final class LoginViewController: UIViewController {
         login.leftViewMode = .always
         login.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: login.frame.height))
         login.keyboardType = .emailAddress
-        login.font = UIFont.systemFont(ofSize: 16)
+        login.font = AppFonts.body
         login.autocapitalizationType = .none
         login.returnKeyType = .done
         return login
@@ -108,7 +108,7 @@ final class LoginViewController: UIViewController {
         password.layer.borderWidth = 0.25
         password.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: password.frame.height))
         password.isSecureTextEntry = true
-        password.font = UIFont.systemFont(ofSize: 16)
+        password.font = AppFonts.body
         password.autocapitalizationType = .none
         password.returnKeyType = .done
         return password
@@ -124,14 +124,14 @@ final class LoginViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Запомнить меня"
-        label.font = UIFont.systemFont(ofSize: 16)
+        label.font = AppFonts.body
         return label
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor(named: "FirstColor")
+        view.backgroundColor = AppColors.firstBackground
         navigationController?.navigationBar.isHidden = true
         
         let isRemembered = UserDefaults.standard.bool(forKey: "remember_me")
@@ -194,7 +194,7 @@ final class LoginViewController: UIViewController {
             loginButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
             loginButton.heightAnchor.constraint(equalToConstant: 50),
             
-            signupButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -25),
+            signupButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 25),
             signupButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstants.leadingMargin),
             signupButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: LayoutConstants.trailingMargin),
             signupButton.heightAnchor.constraint(equalToConstant: 50),
@@ -275,14 +275,24 @@ final class LoginViewController: UIViewController {
     }
     
     @objc private func keyboardShow(notification: NSNotification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            loginScrollView.contentOffset.y = keyboardSize.height - (loginScrollView.frame.height - loginButton.frame.minY)
-            loginScrollView.verticalScrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
+
+        guard let frame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else {
+            return
         }
+
+        let keyboardFrame = frame.cgRectValue
+        let keyboardHeight = keyboardFrame.height
+
+        let bottomInset = keyboardHeight - view.safeAreaInsets.bottom
+
+        loginScrollView.contentInset.bottom = bottomInset
+        loginScrollView.verticalScrollIndicatorInsets.bottom = bottomInset
     }
     
     @objc private func keyboardHide(notification: NSNotification) {
-        loginScrollView.contentOffset = CGPoint(x: 0, y: 0)
+
+        loginScrollView.contentInset = .zero
+        loginScrollView.verticalScrollIndicatorInsets = .zero
     }
     
     private func showAlert(message: String) {

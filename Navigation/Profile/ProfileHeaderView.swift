@@ -28,13 +28,13 @@ final class ProfileHeaderView: UITableViewHeaderFooterView {
     
     private func setupUI() {
         
-        contentView.backgroundColor = UIColor(named: "FirstColor")
+        contentView.backgroundColor = AppColors.firstBackground
         
         avatarImageView.layer.cornerRadius = 64
         avatarImageView.clipsToBounds = true
         avatarImageView.contentMode = .scaleAspectFill
         
-        fullNameLabel.font = .boldSystemFont(ofSize: 18)
+        fullNameLabel.font = AppFonts.body
         fullNameLabel.textColor = UIColor(named: "TextColor")
         
         statusLabel.font = .systemFont(ofSize: 16)

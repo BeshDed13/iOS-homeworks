@@ -14,4 +14,5 @@ struct ChatItem {
     let lastMessage: String
     let date: Date
     let isOnline: Bool
+    let isNotes: Bool
 }

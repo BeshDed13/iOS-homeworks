@@ -29,6 +29,8 @@ final class ChatsViewModel {
     func startListening() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
+        service.createNotesChatIfNeeded(userId: uid)
+        
         service.listenChats(userId: uid) { [weak self] chats in
             self?.processChats(chats, currentUid: uid)
         }
@@ -39,6 +41,22 @@ final class ChatsViewModel {
         var result: [ChatItem] = []
         
         for chat in chats {
+            
+            if chat.type == .notes {
+
+                let item = ChatItem(
+                    id: chat.id,
+                    name: "Заметки",
+                    avatarId: "",
+                    lastMessage: chat.lastMessage,
+                    date: chat.lastMessageDate,
+                    isOnline: false,
+                    isNotes: true
+                )
+
+                result.append(item)
+                continue
+            }
             
             guard let companionId = chat.participants.first(where: { $0 != currentUid }) else {
                 continue
@@ -88,7 +106,8 @@ final class ChatsViewModel {
             avatarId: user.avatarId,
             lastMessage: chat.lastMessage,
             date: chat.lastMessageDate,
-            isOnline: user.status == "Online"
+            isOnline: user.status == "Online",
+            isNotes: false
         )
     }
 }

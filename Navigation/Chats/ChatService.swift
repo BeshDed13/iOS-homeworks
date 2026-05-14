@@ -20,6 +20,9 @@ final class ChatService {
                 let chats = documents.compactMap { doc -> Chat? in
                     let data = doc.data()
                     
+                    let typeRaw = data["type"] as? String ?? "dialog"
+                    let type = ChatType(rawValue: typeRaw) ?? .dialog
+                    
                     guard
                         let participants = data["participants"] as? [String],
                         let lastMessage = data["lastMessage"] as? String,
@@ -29,6 +32,7 @@ final class ChatService {
                     
                     return Chat(
                         id: doc.documentID,
+                        type: type,
                         participants: participants,
                         lastMessage: lastMessage,
                         lastMessageDate: timestamp.dateValue(),
@@ -54,6 +58,9 @@ final class ChatService {
                 }
 
                 let data = doc.data()
+                
+                let typeRaw = data["type"] as? String ?? "dialog"
+                let type = ChatType(rawValue: typeRaw) ?? .dialog
 
                 guard
                     let participants = data["participants"] as? [String],
@@ -67,6 +74,7 @@ final class ChatService {
 
                 let chat = Chat(
                     id: doc.documentID,
+                    type: type,
                     participants: participants,
                     lastMessage: lastMessage,
                     lastMessageDate: timestamp.dateValue(),
@@ -94,7 +102,8 @@ final class ChatService {
                 "participants": users,
                 "lastMessage": "",
                 "lastMessageDate": Timestamp(),
-                "lastSenderId": ""
+                "lastSenderId": "",
+                "type": "dialog"
             ])
 
             completion(chatRef!.documentID)
@@ -154,5 +163,29 @@ final class ChatService {
                 "lastMessageDate": timestamp,
                 "lastSenderId": senderId
             ])
+    }
+    
+    func createNotesChatIfNeeded(userId: String) {
+
+        let chatId = "notes_\(userId)"
+        let ref = db.collection("chats").document(chatId)
+
+        ref.getDocument { [weak self] snapshot, _ in
+
+            guard let self else { return }
+
+            if snapshot?.exists == true {
+                return
+            }
+
+            ref.setData([
+                "type": "notes",
+                "participants": [userId],
+                "participantsKey": chatId,
+                "lastMessage": "",
+                "lastMessageDate": Timestamp(),
+                "lastSenderId": userId
+            ])
+        }
     }
 }

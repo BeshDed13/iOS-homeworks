@@ -81,15 +81,22 @@ final class ChatCell: UITableViewCell {
     }
     
     func configure(with item: ChatItem) {
-        
+
         nameLabel.text = item.name
         messageLabel.text = item.lastMessage
-        
-        avatarImageView.image = UIImage(named: item.avatarId)
-        
         dateLabel.text = formatDate(item.date)
-        
+
         statusView.backgroundColor = item.isOnline ? .green : .lightGray
+
+        if item.isNotes {
+            avatarImageView.image = UIImage(systemName: "bookmark.fill")
+            avatarImageView.tintColor = .systemBlue
+            avatarImageView.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
+        } else {
+            avatarImageView.image = UIImage(named: item.avatarId)
+            avatarImageView.tintColor = nil
+            avatarImageView.backgroundColor = .lightGray
+        }
     }
     
     private func formatDate(_ date: Date) -> String {

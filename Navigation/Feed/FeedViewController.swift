@@ -11,6 +11,10 @@ final class FeedViewController: UIViewController {
     
     private let favoritesService = FavoritesService()
     
+    private let viewModel = FeedViewModel()
+    
+    private var posts: [Post] = []
+    
     private let tableView: UITableView = {
         let table = UITableView()
         table.translatesAutoresizingMaskIntoConstraints = false
@@ -21,7 +25,7 @@ final class FeedViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Лента"
-        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.font = AppFonts.title
         label.textAlignment = .left
         return label
     }()
@@ -29,7 +33,7 @@ final class FeedViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor(named: "FirstColor")
+        view.backgroundColor = AppColors.firstBackground
         
         navigationItem.titleView = titleLabel
         
@@ -38,6 +42,9 @@ final class FeedViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         
+        bindViewModel()
+        viewModel.fetchCats()
+        
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -45,27 +52,35 @@ final class FeedViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
+    
+    private func bindViewModel() {
+
+        viewModel.onPostsUpdated = { [weak self] in
+
+            self?.tableView.reloadData()
+        }
+    }
 }
 
 extension FeedViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        postExamples.count
+        viewModel.posts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "post", for: indexPath) as! PostTableViewCell
         
-        cell.configPostArray(post: postExamples[indexPath.row])
+        cell.configPostArray(post: viewModel.posts[indexPath.row])
         
         cell.onLike = { [weak self] in
             guard let self = self else { return }
             
-            postExamples[indexPath.row].likes += 1
+            viewModel.likePost(at: indexPath.row)
             
             do {
-                try self.favoritesService.save(post: postExamples[indexPath.row])
+                try self.favoritesService.save(post: self.viewModel.posts[indexPath.row])
                 tableView.reloadRows(at: [indexPath], with: .automatic)
             } catch {
                 print("Failed to save post: \(error)")
